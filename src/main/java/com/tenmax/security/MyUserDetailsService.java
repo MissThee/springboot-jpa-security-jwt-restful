@@ -1,6 +1,6 @@
-package com.tenmax.config;
+package com.tenmax.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.tenmax.model.UserModel;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -13,12 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class myUserDetailsService implements UserDetailsService {
+public class MyUserDetailsService implements UserDetailsService {
     @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        UserModel user = new UserModel();
-        if (user == null) {
-            throw new UsernameNotFoundException("User [" + userName + "] not found");
+    public UserDetails loadUserByUsername(String inputUsername) throws UsernameNotFoundException {
+        UserModel user = new UserModel();//固定测试用户 账号123 密码123
+
+//      if (user == null) {
+        if(!user.getUsername().equals(inputUsername)){
+            throw new UsernameNotFoundException("User [" + user.getUsername() + "] not found");
         }
         return new User(user.getUsername(), user.getPassword(), getAuthList(user));//返回包括权限角色的User(此User为security提供的实体类)给security;
     }
