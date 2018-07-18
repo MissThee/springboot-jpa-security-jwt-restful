@@ -47,6 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable(); //此时既可以使用Get方法也可以使用Post方法提交
         http
                 .authorizeRequests()
+                .antMatchers("/files").permitAll()
                 .and()
                 .formLogin()
 //                .loginPage("/loginPageRedirect") //security需要登录时，跳转此路由。返回前端需要登陆的信息
@@ -70,8 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
-        super.configure(web);
+    public void configure(WebSecurity web) {
     }
 
     DaoAuthenticationProvider daoAuthenticationProvider() {

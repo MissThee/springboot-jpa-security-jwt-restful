@@ -25,33 +25,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class MyJWTVerificationFilter implements Filter {
+public class MyJWTVerificationFilter extends OncePerRequestFilter {
+
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-
-    }
-
-    @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
+    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         String token = httpServletRequest.getHeader("Authorization");
+        Authentication authentication;
+        System.out.println(httpServletRequest.getRequestURI());
+//       静态资源白名单路径暂时由此设置，以临时登录无实际权限用户身份获取
+        if(httpServletRequest.getRequestURI().startsWith("/files/")||httpServletRequest.getRequestURI().equals("/favicon.ico")){
+            authentication =new UsernamePasswordAuthenticationToken(null, null, null);
+        }else {
+            if (!JavaJWT.verifyToken(token)) {
+                ResponseOut.out401(httpServletResponse);
+                return;
+            }
+            String id = JavaJWT.getClaim(token, "id");
+            String auth = JavaJWT.getClaim(token, "auth");
 
-        if (!JavaJWT.verifyToken(token)) {
-            ResponseOut.out401(httpServletResponse);
-            return;
+            authentication = new UsernamePasswordAuthenticationToken(id, null, authStr2List(auth));
         }
-        String id = JavaJWT.getClaim(token, "id");
-        String auth = JavaJWT.getClaim(token, "auth");
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(id, null, authStr2List(auth));
-
         SecurityContext securityContext = new SecurityContextImpl();
         securityContext.setAuthentication(authentication);
         SecurityContextHolder.setContext(securityContext);
 
-        filterChain.doFilter(servletRequest, servletResponse);
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
 
     }
 

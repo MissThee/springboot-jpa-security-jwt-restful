@@ -186,7 +186,11 @@ public class JavaJWT {
     }
 
     public static String getClaim(String token, String claimKey) {
-        DecodedJWT jwt = JWT.decode(token);
-        return jwt.getClaim(claimKey).asString();
+//        try {
+            DecodedJWT jwt = JWT.decode(token);
+            return jwt.getClaim(claimKey).asString();
+//        }catch(Exception e){
+//            return "guest";
+//        }
     }
 }
