@@ -22,37 +22,37 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class Controller {
 
-    @RequestMapping(value = "/admin", method = RequestMethod.GET)
+    @PostMapping(value = "/admin")
     public JSONObject admin() {
         JSONObject jO = new JSONObject();
         jO.put("result", "/admin");
         return jO;
     }
 
-    @RequestMapping(value = "/provider", method = RequestMethod.GET)
+    @PostMapping(value = "/provider")
     public JSONObject provider() {
         JSONObject jO = new JSONObject();
         jO.put("result", "/provider");
         return jO;
     }
 
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    @PostMapping(value = "/user")
     public JSONObject user() {
         JSONObject jO = new JSONObject();
         jO.put("result", "/user");
         return jO;
     }
 
-    @RequestMapping(value = "/about", method = RequestMethod.GET)
+    @PostMapping(value = "/about")
     public JSONObject about() {
         JSONObject jO = new JSONObject();
-        jO.put("result", "/usabouter");
+        jO.put("result", "/about");
         return jO;
     }
 
     //==================== method annotation ====================
     @DenyAll
-    @RequestMapping(value = "/deny", method = RequestMethod.GET)
+    @PostMapping(value = "/deny")
     public JSONObject deny() {
         System.out.println("all user cant get this!");
         JSONObject jO = new JSONObject();
@@ -61,7 +61,7 @@ public class Controller {
     }
 
     @RolesAllowed({"ADMIN", "PROVIDER"})
-    @RequestMapping(value = "/adminAT", method = RequestMethod.GET)
+    @PostMapping(value = "/adminAT")
     public JSONObject adminAT() {
         System.out.println("!!authentication!!:" + SecurityContextHolder.getContext().getAuthentication());
         JSONObject jO = new JSONObject();
@@ -70,8 +70,18 @@ public class Controller {
         return jO;
     }
 
+    @RolesAllowed({"ADMIN1", "PROVIDER1"})
+    @PostMapping(value = "/adminAT1")
+    public JSONObject adminAT1() {
+        System.out.println("!!authentication!!:" + SecurityContextHolder.getContext().getAuthentication());
+        JSONObject jO = new JSONObject();
+        jO.put("result", "/adminAT1");
+        jO.put("result-getAuthentication", SecurityContextHolder.getContext().getAuthentication());
+        return jO;
+    }
+
     @PermitAll
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    @PostMapping(value = "/all")
     public JSONObject all() {
         JSONObject jO = new JSONObject();
         jO.put("result", "everyone can login !");
@@ -79,14 +89,14 @@ public class Controller {
     }
 
     @PermitAll
-    @RequestMapping(value = "/error", method = RequestMethod.GET)
+    @PostMapping(value = "/error1")
     public JSONObject error() {
         JSONObject jO = new JSONObject();
         jO.put("result", "error page");
         return jO;
     }
 
-    @RequestMapping(value = "/logout1", method = RequestMethod.GET)
+    @PostMapping(value = "/logout1")
     public JSONObject logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
@@ -98,4 +108,6 @@ public class Controller {
         jO.put("result", "LogoutSuccess。default redirect:/login?logout");
         return jO;
     }
+
+
 }

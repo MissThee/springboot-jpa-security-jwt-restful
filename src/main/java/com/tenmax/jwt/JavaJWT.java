@@ -9,20 +9,32 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.tenmax.tool.GetDate;
+import io.swagger.models.auth.In;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
+@Slf4j
 public class JavaJWT {
     private static final String issuer = "Demo1";       //发布者
     private static final String secret = "MIL7kBs6Z";   //验证token密钥
-    private static  Logger logger = LoggerFactory.getLogger(JavaJWT.class);
+
+
     /**
-     * @param id              用户id
+     * @param claimMap 用户信息 有效时间（默认8天）
+     */
+    public static String createToken(Map<String, Object> claimMap) {
+        return createToken(claimMap, 8);
+    }
+
+    /**
+     * @param claimMap          用户信息
      * @param expiresDayFromNow 有效时间（天）
      */
-    public static String createToken(Object id, int expiresDayFromNow) {
+    public static String createToken(Map<String, Object> claimMap, int expiresDayFromNow) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             //Map<String, Object> headerClaims = new HashMap();
@@ -32,9 +44,21 @@ public class JavaJWT {
             builder.withIssuer(issuer);
             builder.withExpiresAt(GetDate.now(expiresDayFromNow));
             // addClaimByUser(builder, user);
-            builder.withClaim("id", id.toString());
+            for (String key : claimMap.keySet()) {
+                Object value = claimMap.get(key);
+
+                if (value instanceof Integer) {
+                    builder.withClaim(key, (int) value);
+                } else if (value instanceof String) {
+                    try {
+                        builder.withClaim(key, Integer.parseInt(value.toString()));
+                    } catch (NumberFormatException e) {
+                        builder.withClaim(key, value.toString());
+                    }
+                }
+            }
             String token = builder.sign(algorithm);
-            logger.info("CREATE TOKEN：" + token);
+            log.info("CREATE TOKEN：" + token);
             return token;
         } catch (UnsupportedEncodingException exception) {
             // UTF-8 encoding not supported
@@ -44,12 +68,39 @@ public class JavaJWT {
         return "";
     }
 
-    /**
-     * @param id 用户id 有效时间（默认8天）
-     */
-    public static String createToken(Object id) {
-        return createToken(id, 8);
-    }
+
+//    /**
+//     * @param id                用户id
+//     * @param expiresDayFromNow 有效时间（天）
+//     */
+//    public static String createToken(Object id, int expiresDayFromNow) {
+//        try {
+//            Algorithm algorithm = Algorithm.HMAC256(secret);
+//            //Map<String, Object> headerClaims = new HashMap();
+//            //headerClaims.put("userId", "1234");
+//            //builder.withHeader(headerClaims);//为jwt添加header键值对
+//            JWTCreator.Builder builder = JWT.create();
+//            builder.withIssuer(issuer);
+//            builder.withExpiresAt(GetDate.now(expiresDayFromNow));
+//            // addClaimByUser(builder, user);
+//            builder.withClaim("id", id.toString());
+//            String token = builder.sign(algorithm);
+//            logger.info("CREATE TOKEN：" + token);
+//            return token;
+//        } catch (UnsupportedEncodingException exception) {
+//            // UTF-8 encoding not supported
+//        } catch (JWTCreationException exception) {
+//            // Invalid Signing configuration / Couldn‘t convert Claims.
+//        }
+//        return "";
+//    }
+//
+//    /**
+//     * @param id 用户id 有效时间（默认8天）
+//     */
+//    public static String createToken(Object id) {
+//        return createToken(id, 8);
+//    }
 
     public static String updateToken(String token, int expiresDayFromNow) {
         try {
@@ -63,7 +114,7 @@ public class JavaJWT {
             builder.withClaim("id", JWT.decode(token).getClaim("id").asString());
 
             String newToken = builder.sign(algorithm);
-            logger.info("REFRESH TOKEN:" + newToken);
+            log.info("REFRESH TOKEN:" + newToken);
             return newToken;
         } catch (UnsupportedEncodingException exception) {
             // UTF-8 encoding not supported
@@ -82,17 +133,18 @@ public class JavaJWT {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             JWTVerifier verifier = JWT.require(algorithm)
                     .withIssuer(issuer)
-                    .build(); // Reusable
-            // instance
-            DecodedJWT jwt = verifier.verify(token);
-            logger.info("CHECK TOEKN: Fine");
+                    .build();
+            verifier.verify(token);
+            log.info("CHECK TOEKN: Fine");
             return true;
-        } catch (UnsupportedEncodingException exception) {
-            logger.info("CHECK TOEKN-ERROR: " + exception);
+        } catch (UnsupportedEncodingException e) {
+            log.info("CHECK TOEKN-ERROR: " + e);
             // UTF-8 encoding not supported
-        } catch (JWTVerificationException exception) {
-            logger.info("CHECK TOEKN-ERROR: " + exception);
+        } catch (JWTVerificationException e) {
+            log.info("CHECK TOEKN-ERROR: " + e);
             // Invalid signature/claims
+        } catch (Exception e) {
+            log.info("CHECK TOEKN-ERROR: " + e);
         }
         return false;
     }
@@ -128,9 +180,13 @@ public class JavaJWT {
         }
     }
 
-    public static String getId (String token) {
+    public static String getId(String token) {
         DecodedJWT jwt = JWT.decode(token);
         return jwt.getClaim("id").asString();
     }
 
+    public static String getClaim(String token, String claimKey) {
+        DecodedJWT jwt = JWT.decode(token);
+        return jwt.getClaim(claimKey).asString();
+    }
 }

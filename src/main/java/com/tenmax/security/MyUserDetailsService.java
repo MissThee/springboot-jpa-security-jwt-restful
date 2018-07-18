@@ -1,36 +1,58 @@
 package com.tenmax.security;
 
-import com.tenmax.model.UserModel;
+import com.tenmax.db.primary.entity.SysPermission;
+import com.tenmax.db.primary.entity.SysRole;
+import com.tenmax.db.primary.entity.SysUser;
+import com.tenmax.db.primary.repository.UserRepository;
+import com.tenmax.db.primary.service.SysUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class MyUserDetailsService implements UserDetailsService {
-    @Override
-    public UserDetails loadUserByUsername(String inputUsername) throws UsernameNotFoundException {
-        UserModel user = new UserModel();//固定测试用户 账号123 密码123
 
-//      if (user == null) {
-        if(!user.getUsername().equals(inputUsername)){
-            throw new UsernameNotFoundException("User [" + user.getUsername() + "] not found");
-        }
-        return new User(user.getUsername(), user.getPassword(), getAuthList(user));//返回包括权限角色的User(此User为security提供的实体类)给security;
+    private final SysUserService sysUserService;
+
+    public MyUserDetailsService(SysUserService sysUserService) {
+        this.sysUserService = sysUserService;
     }
 
-    private List<GrantedAuthority> getAuthList(UserModel user) {
-        List<GrantedAuthority> list = new ArrayList<>(); //GrantedAuthority是security提供的权限类，
-        for (String role : user.getRoles()) {
-            //权限如果前缀是ROLE_，security就会认为这是个角色信息，而不是权限，例如ROLE_MENBER就是MENBER角色，CAN_SEND就是CAN_SEND权限
-            list.add(new SimpleGrantedAuthority("ROLE_" + role));
+    @Transactional
+    @Override
+    public UserDetails loadUserByUsername(String inputUsername) {
+        SysUser sysUser = sysUserService.selectUserByUsername(inputUsername);
+        if (sysUser == null) {
+            throw new UsernameNotFoundException("User not found [" + inputUsername + "]", new Throwable());
         }
+        return new User(sysUser.getId().toString(), sysUser.getPassword(), getAuthList(sysUser));//返回包括权限角色的User(此User为security提供的实体类)给security;
+    }
+
+    private List<GrantedAuthority> getAuthList(SysUser sysUser) {
+        List<GrantedAuthority> list = new ArrayList<>(); //GrantedAuthority是security提供的权限类，
+        Set<SysRole> roleList = sysUser.getRoleList();
+        for (SysRole role : roleList) {
+            list.add(new SimpleGrantedAuthority("ROLE_" + role.getRole()));
+            for (SysPermission permission : role.getPermissionList()) {
+                list.add(new SimpleGrantedAuthority(role.getRole() + ":" + permission.getPermission()));
+            }
+        }
+        //权限如果前缀是ROLE_，security就会认为这是个角色信息，而不是权限，例如ROLE_MENBER就是MENBER角色，CAN_SEND就是CAN_SEND权限
         return list;
     }
 }

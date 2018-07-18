@@ -1,5 +1,7 @@
 package com.tenmax.result;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -8,9 +10,13 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+
 //将Controller中返回值默认使用Result.ok()打包
 @ControllerAdvice
-public class ResultPacking implements ResponseBodyAdvice<Object> {
+public class _ResPacking implements ResponseBodyAdvice<Object> {
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         return true;
@@ -23,15 +29,25 @@ public class ResultPacking implements ResponseBodyAdvice<Object> {
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   ServerHttpRequest request,
                                   ServerHttpResponse response) {
-//指定路径不对返回结果进行打包
-//        String requestPath = request.getURI().getPath();
-//        if (!requestPath.startsWith("/ug")) {
+
+//        if (body instanceof JSONObject) {
 //            return body;
 //        }
-        if (body instanceof Result) {
-            return body;
-        } else {
-            return Result.ok(body);
+
+        if (body instanceof Byte || body instanceof Short || body instanceof Integer || body instanceof Long || body instanceof Double || body instanceof Float || body instanceof Character || body instanceof Boolean) {
+            JSONObject jO = new JSONObject();
+            jO.put("_msg", "");
+            jO.put("result", body);
+            return jO;
+        } else if (body instanceof String) {
+            JSONObject jO = new JSONObject();
+            jO.put("_msg", "");
+            jO.put("result", body);
+            return jO;
         }
+
+        return body;
     }
+//            return new JSONObject("result", body);
+
 }

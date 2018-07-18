@@ -1,8 +1,10 @@
 package com.tenmax.config;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -27,4 +29,6 @@ public class CorsConfig {
         bean.setOrder(0); // 这个顺序很重要，为避免麻烦请设置在最前
         return bean;
     }
+
+
 }

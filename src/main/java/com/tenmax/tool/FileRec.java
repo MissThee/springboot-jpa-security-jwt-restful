@@ -1,9 +1,9 @@
 package com.tenmax.tool;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -14,15 +14,14 @@ public class FileRec {
     private static String rootPath;
     private static int fileMaxSize;
 
-
     @Value("${web.upload.path:C:/Project-TestFolder}")  //F:/workovermachineFiles/
     public void setRootPath(String a) {
-        rootPath = (a.endsWith("/")||a.endsWith("\\"))?a:a.concat("/");
+        rootPath = (a.endsWith("/") || a.endsWith("\\")) ? a : a.concat("/");
     }
 
     @Value("${web.upload.file-max-size:25*1024*1024}")  //25*1024*1024
     public void setFileMaxSize(String a) {
-        a = StringUtils.deleteWhitespace(a);
+        a = a.replaceAll(" ", "");
         String[] aArr = a.split("\\*");
         int size = 1;
         for (String s : aArr) {
@@ -48,10 +47,12 @@ public class FileRec {
             // 获取文件名
             String fileName = file.getOriginalFilename();
             // 获取扩展名
-            String extensionName = StringUtils.substringAfter(fileName, ".");
+
+            String extensionName = fileName.substring(fileName.lastIndexOf("."));
+//            String extensionName = StringUtils.substringAfter(fileName, ".");
             System.out.println("extensionName:" + extensionName);
             // 文件在静态资源文件夹中路径   必须使用files作为根目录，files已做拦截白名单处理
-            String dataDirectory = "files" + File.separator + "upload" + File.separator + ( (StringUtils.isEmpty(StringUtils.deleteWhitespace(path))) ? "" : (path + File.separator));
+            String dataDirectory = "files" + File.separator + "upload" + File.separator + ((StringUtils.isEmpty(path)) ? "" : (path.replaceAll(" ","") + File.separator));
             // 上传完整路径
             String filePath = rootPath.concat(dataDirectory);
             File dest = new File(filePath, fileName);
