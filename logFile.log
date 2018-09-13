@@ -1,0 +1,3 @@
+2018-09-13 11:41:17.404  INFO 34964 --- [restartedMain] c.t.SpringBootSecurityDemoApplication    : Starting SpringBootSecurityDemoApplication on WORK with PID 34964 (F:\WORKWORK_TEST\springboot-jpa-security-jwt-restful\target\classes started by MT in F:\WORKWORK_TEST\springboot-jpa-security-jwt-restful)
+2018-09-13 11:41:17.406  INFO 34964 --- [restartedMain] c.t.SpringBootSecurityDemoApplication    : No active profile set, falling back to default profiles: default
+2018-09-13 11:41:17.459  INFO 34964 --- [restartedMain] ConfigServletWebServerApplicationContext : Refreshing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@21e6edf6: startup date [Thu Sep 13 11:41:17 CST 2018]; root of context hierarchy

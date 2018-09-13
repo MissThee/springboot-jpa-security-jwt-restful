@@ -36,12 +36,12 @@ public class _ResPacking implements ResponseBodyAdvice<Object> {
 
         if (body instanceof Byte || body instanceof Short || body instanceof Integer || body instanceof Long || body instanceof Double || body instanceof Float || body instanceof Character || body instanceof Boolean) {
             JSONObject jO = new JSONObject();
-            jO.put("_msg", "");
+            jO.put("msg", "");
             jO.put("result", body);
             return jO;
         } else if (body instanceof String) {
             JSONObject jO = new JSONObject();
-            jO.put("_msg", "");
+            jO.put("msg", "");
             jO.put("result", body);
             return jO;
         }

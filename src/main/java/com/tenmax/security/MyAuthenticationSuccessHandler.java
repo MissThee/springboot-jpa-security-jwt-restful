@@ -42,7 +42,7 @@ public class MyAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucce
         log.info("登录成功");
         JSONObject jO = new JSONObject();
         jO.put("result", true);
-        jO.put("_msg", "success");
+        jO.put("msg", "success");
         jO.put("authentication", authentication);
         response.setHeader("Authorization", JavaJWT.createToken(getClaimMap(authentication)));
         ResponseOut.out200(response, jO);

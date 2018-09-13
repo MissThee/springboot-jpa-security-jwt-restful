@@ -75,7 +75,7 @@ public class SysUserServiceImp implements SysUserService {
         String encodedPassword = new BCryptPasswordEncoder().encode(sysUser.getPassword());
         sysUser.setPassword(encodedPassword);
         boolean result = false;
-        String _msg = "";
+        String msg = "";
         try {
             result = true;
             sysUser = userRepository.saveAndFlush(sysUser);
@@ -83,11 +83,11 @@ public class SysUserServiceImp implements SysUserService {
             e.getMessage();
             result = false;
             sysUser = null;
-            _msg=e.toString();
+            msg=e.toString();
         }
         jO.put("result", result);
         jO.put("data", sysUser);
-        jO.put("_msg",_msg);
+        jO.put("msg",msg);
         return jO;
     }
 

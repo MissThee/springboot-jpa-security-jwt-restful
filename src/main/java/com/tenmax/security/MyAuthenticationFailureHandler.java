@@ -25,7 +25,7 @@ public class MyAuthenticationFailureHandler extends SimpleUrlAuthenticationFailu
         log.info("登录失败: "+exception );
         JSONObject jO = new JSONObject();
         jO.put("result", false);
-        jO.put("_msg", exception.getMessage());
+        jO.put("msg", exception.getMessage());
         ResponseOut.out200(response, jO);
     }
 }

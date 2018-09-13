@@ -1,12 +1,7 @@
 package com.tenmax.security;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -15,8 +10,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
@@ -62,11 +55,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth)  {
         //根据传入的AuthenticationManagerBuilder中的userDetailsService方法来接收我们自定义的认证方法。
-        //且该方法必须要实现UserDetailsService这个接口。这个接口需返回添加了角色和权限的UserDetails对象或实现类对象
-        //密码使用BCryptPasswordEncoder()方法验证，因为这里使用了BCryptPasswordEncoder()方法验证。所以在注册用户的时候在接收前台明文密码之后也需要使用BCryptPasswordEncoder().encode(明文密码)方法加密密码,每次密码生成的均不同，但验证均可通过。
-//        auth.userDetailsService(myUserDetailsService).passwordEncoder(bCryptPasswordEncoder);
         auth.authenticationProvider(daoAuthenticationProvider());
     }
 
@@ -76,9 +66,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setHideUserNotFoundExceptions(false);//设置身份认证返回用户自定义消息，不设置则返回bad credentials
-        daoAuthenticationProvider.setUserDetailsService(myUserDetailsService);
-        daoAuthenticationProvider.setPasswordEncoder(bCryptPasswordEncoder);
+        daoAuthenticationProvider.setHideUserNotFoundExceptions(false);//设置身份认证返回用户自定义消息。不设置则返回bad credentials
+        daoAuthenticationProvider.setUserDetailsService(myUserDetailsService); //且该方法必须要实现UserDetailsService这个接口。这个接口需返回添加了角色和权限的UserDetails对象或实现类对象
+        daoAuthenticationProvider.setPasswordEncoder(bCryptPasswordEncoder);//密码使用BCryptPasswordEncoder()方法验证，因为这里使用了BCryptPasswordEncoder()方法验证。所以在注册用户的时候在接收前台明文密码之后也需要使用BCryptPasswordEncoder().encode(明文密码)方法加密密码,每次密码生成的均不同，但验证均可通过。
         return daoAuthenticationProvider;
     }
 

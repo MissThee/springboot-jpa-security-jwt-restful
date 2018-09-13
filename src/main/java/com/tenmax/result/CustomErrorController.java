@@ -26,7 +26,7 @@ public class CustomErrorController implements ErrorController {
     public Object error(HttpServletRequest request, HttpServletResponse response) throws IOException {
         JSONObject jO = new JSONObject();
         HttpStatus httpStatus = HttpStatus.valueOf(response.getStatus());
-        jO.put("_msg", "/error: " + httpStatus.getReasonPhrase()+". ");
+        jO.put("msg", "/error: " + httpStatus.getReasonPhrase()+". ");
         ErrorLogPrinter.logOutPut(request);
         return new ResponseEntity<>(jO, httpStatus);//ResponseEntity 可动态指定返回状态码
     }

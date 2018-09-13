@@ -28,7 +28,7 @@ public class ResponseOut {
         HttpStatus httpStatus = HttpStatus.valueOf(code);
         response.setStatus(httpStatus.value());
         JSONObject jO = new JSONObject() {{
-            put("_msg", httpStatus.getReasonPhrase());
+            put("msg", httpStatus.getReasonPhrase());
         }};
         out(response, jO);
     }

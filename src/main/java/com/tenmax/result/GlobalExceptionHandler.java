@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
         e.printStackTrace();
         ErrorLogPrinter.logOutPut(request, e);
         JSONObject jO = new JSONObject();
-        jO.put("_msg", HttpStatus.FORBIDDEN.getReasonPhrase());
+        jO.put("msg", HttpStatus.FORBIDDEN.getReasonPhrase());
         return jO;
     }
 
@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
         e.printStackTrace();
         ErrorLogPrinter.logOutPut(request, e);
         JSONObject jO = new JSONObject();
-        jO.put("_msg", "exceptionHandler: " + e);
+        jO.put("msg", "exceptionHandler: " + e);
         return jO;
     }
 

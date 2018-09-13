@@ -34,12 +34,12 @@ public class LoginController {
             username = dataJO.getString("username");
             if (StringUtils.isEmpty(username)) {
                 jO.put("result", false);
-                jO.put("_msg", "用户名为空");
+                jO.put("msg", "用户名为空");
                 return jO;
             }
         } else {
             jO.put("result", false);
-            jO.put("_msg", "无用户名字段");
+            jO.put("msg", "无用户名字段");
             return jO;
         }
 
@@ -47,12 +47,12 @@ public class LoginController {
             password = dataJO.getString("password");
             if (StringUtils.isEmpty(password)) {
                 jO.put("result", false);
-                jO.put("_msg", "密码为空");
+                jO.put("msg", "密码为空");
                 return jO;
             }
         } else {
             jO.put("result", false);
-            jO.put("_msg", "无密码字段");
+            jO.put("msg", "无密码字段");
             return jO;
         }
         SysUser sysUser = null;
@@ -60,7 +60,7 @@ public class LoginController {
             sysUser = sysUserService.selectUserByUsername(username);
         } catch (Exception e) {
             jO.put("result", false);
-            jO.put("_msg", "无此用户");
+            jO.put("msg", "无此用户");
             return jO;
         }
         if (new BCryptPasswordEncoder().matches(password, sysUser.getPassword())) {
@@ -69,11 +69,11 @@ public class LoginController {
             userMap.put("auth", Joiner.on(",").join(getAuthList(sysUser)));
             res.setHeader("Authorization", JavaJWT.createToken(userMap));
             jO.put("result", "true");
-            jO.put("_msg", "登录成功");
+            jO.put("msg", "登录成功");
             return jO;
         } else {
             jO.put("result", false);
-            jO.put("_msg", "密码错误");
+            jO.put("msg", "密码错误");
             return jO;
         }
     }
@@ -82,7 +82,7 @@ public class LoginController {
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
     public Object loginPageRedirect() {
         JSONObject jO = new JSONObject();
-        jO.put("_msg", "未登录，跳转至登录页");
+        jO.put("msg", "未登录，跳转至登录页");
         return jO;
     }
 

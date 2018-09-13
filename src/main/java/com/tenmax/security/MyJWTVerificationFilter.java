@@ -34,6 +34,7 @@ public class MyJWTVerificationFilter extends OncePerRequestFilter {
         Authentication authentication;
         System.out.println(httpServletRequest.getRequestURI());
 //       静态资源白名单路径暂时由此设置，以临时登录无实际权限用户身份获取
+
         if(httpServletRequest.getRequestURI().startsWith("/files/")||httpServletRequest.getRequestURI().equals("/favicon.ico")){
             authentication =new UsernamePasswordAuthenticationToken(null, null, null);
         }else {
