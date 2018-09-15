@@ -1,4 +1,4 @@
-package com.tenmax.db.primary.tool;
+package com.server.db.primary.tool;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;

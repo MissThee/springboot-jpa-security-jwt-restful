@@ -1,6 +1,6 @@
-package com.tenmax.db.primary.repository;
+package com.server.db.primary.repository;
 
-import com.tenmax.db.primary.entity.SysUser;
+import com.server.db.primary.entity.SysUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

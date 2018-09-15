@@ -1,4 +1,4 @@
-package com.tenmax.db.primary.common.repository;
+package com.server.db.primary.common.repository;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;

@@ -1,4 +1,4 @@
-package com.tenmax.result;
+package com.server.result;
 
 
 import com.alibaba.fastjson.JSONObject;

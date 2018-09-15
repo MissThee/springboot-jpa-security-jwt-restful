@@ -1,16 +1,14 @@
-package com.tenmax.controller;
+package com.server.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
-import com.tenmax.db.primary.entity.SysPermission;
-import com.tenmax.db.primary.entity.SysRole;
-import com.tenmax.db.primary.entity.SysUser;
-import com.tenmax.db.primary.service.SysUserService;
-import com.tenmax.jwt.JavaJWT;
+import com.server.db.primary.entity.SysPermission;
+import com.server.db.primary.entity.SysRole;
+import com.server.db.primary.entity.SysUser;
+import com.server.db.primary.service.SysUserService;
+import com.server.jwt.JavaJWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;

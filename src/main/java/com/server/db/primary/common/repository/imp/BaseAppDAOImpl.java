@@ -1,6 +1,6 @@
-package com.tenmax.db.primary.common.repository.imp;
+package com.server.db.primary.common.repository.imp;
 
-import com.tenmax.db.primary.common.repository.BaseAppDAO;
+import com.server.db.primary.common.repository.BaseAppDAO;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 

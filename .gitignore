@@ -3,3 +3,10 @@
 \.idea/
 
 SpringBootSecurityDemo\.iml
+target/
+!.mvn/wrapper/maven-wrapper.jar
+  
+### IntelliJ IDEA ###
+.idea
+*.log
+*.gz

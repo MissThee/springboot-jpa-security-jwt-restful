@@ -1,23 +1,16 @@
-package com.tenmax.db.primary.service.imp;
+package com.server.db.primary.service.imp;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tenmax.db.primary.entity.SysUser;
-import com.tenmax.db.primary.entity.SysUser_;
-import com.tenmax.db.primary.repository.UserRepository;
-import com.tenmax.db.primary.service.SysUserService;
+import com.server.db.primary.entity.SysUser;
+import com.server.db.primary.entity.SysUser_;
+import com.server.db.primary.repository.UserRepository;
+import com.server.db.primary.service.SysUserService;
 
-import javassist.bytecode.stackmap.BasicBlock;
-import org.hibernate.criterion.Conjunction;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.lang.NonNullApi;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

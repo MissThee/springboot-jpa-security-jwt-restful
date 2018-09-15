@@ -1,4 +1,4 @@
-package com.tenmax.jwt;
+package com.server.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
@@ -8,11 +8,8 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.tenmax.tool.GetDate;
-import io.swagger.models.auth.In;
+import com.server.tool.GetDate;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
@@ -60,12 +57,11 @@ public class JavaJWT {
             String token = builder.sign(algorithm);
             log.info("CREATE TOKEN：" + token);
             return token;
-        } catch (UnsupportedEncodingException exception) {
+        } catch (Exception e) {
+            e.printStackTrace();
             // UTF-8 encoding not supported
-        } catch (JWTCreationException exception) {
-            // Invalid Signing configuration / Couldn‘t convert Claims.
+            return "";
         }
-        return "";
     }
 
 

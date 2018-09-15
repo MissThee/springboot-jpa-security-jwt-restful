@@ -1,4 +1,4 @@
-package com.tenmax.result;
+package com.server.result;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

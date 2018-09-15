@@ -1,7 +1,6 @@
-package com.tenmax.db.primary.entity;
+package com.server.db.primary.entity;
 
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 

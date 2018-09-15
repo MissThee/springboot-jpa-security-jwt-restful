@@ -1,9 +1,9 @@
-package com.tenmax.controller;
+package com.server.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tenmax.db.primary.entity.SysUser;
-import com.tenmax.db.primary.service.SysUserService;
-import com.tenmax.db.primary.tool.BeanTool;
+import com.server.db.primary.entity.SysUser;
+import com.server.db.primary.service.SysUserService;
+import com.server.db.primary.tool.BeanTool;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;

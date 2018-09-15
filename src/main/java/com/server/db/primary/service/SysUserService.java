@@ -1,8 +1,8 @@
-package com.tenmax.db.primary.service;
+package com.server.db.primary.service;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.tenmax.db.primary.entity.SysUser;
+import com.server.db.primary.entity.SysUser;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

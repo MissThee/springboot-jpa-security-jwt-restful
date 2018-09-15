@@ -1,6 +1,5 @@
-package com.tenmax.result;
+package com.server.result;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -9,10 +8,6 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
-
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
 
 //将Controller中返回值默认使用Result.ok()打包
 @ControllerAdvice

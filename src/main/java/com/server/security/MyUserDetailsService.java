@@ -1,25 +1,18 @@
-package com.tenmax.security;
+package com.server.security;
 
-import com.tenmax.db.primary.entity.SysPermission;
-import com.tenmax.db.primary.entity.SysRole;
-import com.tenmax.db.primary.entity.SysUser;
-import com.tenmax.db.primary.repository.UserRepository;
-import com.tenmax.db.primary.service.SysUserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import com.server.db.primary.entity.SysPermission;
+import com.server.db.primary.entity.SysRole;
+import com.server.db.primary.entity.SysUser;
+import com.server.db.primary.service.SysUserService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

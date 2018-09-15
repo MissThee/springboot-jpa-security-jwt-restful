@@ -1,4 +1,4 @@
-package com.tenmax.db.primary.tool;
+package com.server.db.primary.tool;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;

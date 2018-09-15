@@ -1,23 +1,19 @@
-package com.tenmax.log;
+package com.server.log;
 
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.Enumeration;
 
 
 @Slf4j
@@ -31,7 +27,7 @@ public class ControllerLog {
         rootPath = a;
     }
 
-    @Pointcut("execution(public * com.tenmax.controller..*.*(..))")
+    @Pointcut("execution(public * com.server.controller..*.*(..))")
     public void webLog() {
     }
 

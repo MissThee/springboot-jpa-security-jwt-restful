@@ -1,4 +1,4 @@
-package com.tenmax.db.primary.entity;
+package com.server.db.primary.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonView;
