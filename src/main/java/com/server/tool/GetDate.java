@@ -1,4 +1,4 @@
-package com.tenmax.tool;
+package com.server.tool;
 
 import java.util.Calendar;
 import java.util.Date;

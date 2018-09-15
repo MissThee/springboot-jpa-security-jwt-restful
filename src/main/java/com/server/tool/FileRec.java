@@ -1,4 +1,4 @@
-package com.tenmax.tool;
+package com.server.tool;
 
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Value;

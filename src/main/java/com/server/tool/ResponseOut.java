@@ -1,15 +1,12 @@
-package com.tenmax.tool;
+package com.server.tool;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
 
 public class ResponseOut {
     //把返回值输出到客户端
