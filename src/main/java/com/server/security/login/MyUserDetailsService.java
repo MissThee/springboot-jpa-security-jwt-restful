@@ -1,4 +1,4 @@
-package com.server.security;
+package com.server.security.login;
 
 import com.server.db.primary.entity.SysPermission;
 import com.server.db.primary.entity.SysRole;

@@ -1,4 +1,4 @@
-package com.server.security;
+package com.server.security.login;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
@@ -24,25 +24,19 @@ public class MyAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucce
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-//        request.getSession().setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
-        log.info("登录成功");
         JSONObject jO = new JSONObject();
         jO.put("result", true);
         jO.put("msg", "success");
-        jO.put("authentication", authentication);
-        response.setHeader("Authorization", JavaJWT.createToken(getClaimMap(authentication)));
-        ResponseOut.out200(response, jO);
-    }
 
-    private Map<String, Object> getClaimMap(Authentication authentication) {
+        String id = authentication.getName();
         List<String> authList = new ArrayList<>();
         for (GrantedAuthority auth : authentication.getAuthorities()) {
             authList.add(auth.getAuthority());
         }
-        String authStr = Joiner.on(",").join(authList);
-        Map<String, Object> claimMap = new HashMap<>();
-        claimMap.put("id", authentication.getName());
-        claimMap.put("auth", authStr);
-        return claimMap;
+        response.setHeader("Authorization", JavaJWT.createToken(id, authList));
+
+        ResponseOut.out200(response, jO);
     }
+
+
 }

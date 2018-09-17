@@ -1,4 +1,4 @@
-package com.server.security;
+package com.server.security.check;
 
 import com.server.jwt.JavaJWT;
 import com.server.tool.ResponseOut;
@@ -21,25 +21,21 @@ import java.util.List;
 @Component
 public class MyJWTVerificationFilter extends OncePerRequestFilter {
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         String token = httpServletRequest.getHeader("Authorization");
-        System.out.println(httpServletRequest.getRequestURI());
-//       静态资源白名单路径暂时由此设置，以临时登录无实际权限用户身份获取
-//        if (httpServletRequest.getRequestURI().startsWith("/files/") || httpServletRequest.getRequestURI().equals("/favicon.ico")) {
-//            authentication = new UsernamePasswordAuthenticationToken(null, null, null);
-//        } else {
-        if ( JavaJWT.verifyToken(token)) {
-            String id = JavaJWT.getClaim(token, "id");
-            String auth = JavaJWT.getClaim(token, "auth");
-            Authentication authentication = new UsernamePasswordAuthenticationToken(id, null, authStr2List(auth));
+        if (JavaJWT.verifyToken(token)) {
+            String id = JavaJWT.getId(token);
+            List<String> authList = JavaJWT.getAuthList(token);
+            List<SimpleGrantedAuthority> list = new ArrayList<>();
+            for (String auth : authList) {
+                list.add(new SimpleGrantedAuthority(auth));
+            }
+            Authentication authentication = new UsernamePasswordAuthenticationToken(id, null, list);
             SecurityContext securityContext = new SecurityContextImpl();
             securityContext.setAuthentication(authentication);
             SecurityContextHolder.setContext(securityContext);
         }
-        SecurityContext context = SecurityContextHolder.getContext();
-//        }
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
@@ -48,11 +44,4 @@ public class MyJWTVerificationFilter extends OncePerRequestFilter {
 
     }
 
-    private List<SimpleGrantedAuthority> authStr2List(String auths) {
-        List<SimpleGrantedAuthority> list = new ArrayList<>();
-        for (String auth : auths.split(",")) {
-            list.add(new SimpleGrantedAuthority(auth));
-        }
-        return list;
-    }
 }

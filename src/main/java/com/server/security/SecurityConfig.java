@@ -1,5 +1,9 @@
 package com.server.security;
 
+import com.server.security.check.MyAccessDeniedHandler;
+import com.server.security.check.MyAuthenticationEntryPoint;
+import com.server.security.check.MyJWTVerificationFilter;
+import com.server.security.login.MyUsernamePasswordAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -29,7 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         loginProcessingUrl = a;
     }
 
-    public SecurityConfig(UserDetailsService myUserDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder, MyJWTVerificationFilter myJWTVerificationFilter) {
+    public SecurityConfig(UserDetailsService myUserDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder, MyJWTVerificationFilter myJWTVerificationFilter ) {
         this.myUserDetailsService = myUserDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.myJWTVerificationFilter = myJWTVerificationFilter;
@@ -39,23 +43,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable(); //此时既可以使用Get方法也可以使用Post方法提交
         http
+                .exceptionHandling().authenticationEntryPoint(new MyAuthenticationEntryPoint())
+                .and()
+                .exceptionHandling().accessDeniedHandler(new MyAccessDeniedHandler())
+                .and()
                 .authorizeRequests()
-                .antMatchers("/files").permitAll()
+//                .antMatchers("/files").permitAll()
                 .and()
                 .formLogin()
 //                .loginPage("/loginPageRedirect") //security需要登录时，跳转此路由。返回前端需要登陆的信息
                 .loginProcessingUrl(loginProcessingUrl)  // 自定义的登录接口
                 .permitAll()
                 .and()
-                .addFilterAt(myJWTVerificationFilter, FilterSecurityInterceptor.class)
                 .addFilterAt(myUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(myJWTVerificationFilter, FilterSecurityInterceptor.class)//不再此处设置替换过滤器，此过滤器也生效
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         ;
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth)  {
+    protected void configure(AuthenticationManagerBuilder auth) {
         //根据传入的AuthenticationManagerBuilder中的userDetailsService方法来接收我们自定义的认证方法。
         auth.authenticationProvider(daoAuthenticationProvider());
     }
@@ -66,9 +74,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setHideUserNotFoundExceptions(false);//设置身份认证返回用户自定义消息。不设置则返回bad credentials
         daoAuthenticationProvider.setUserDetailsService(myUserDetailsService); //且该方法必须要实现UserDetailsService这个接口。这个接口需返回添加了角色和权限的UserDetails对象或实现类对象
         daoAuthenticationProvider.setPasswordEncoder(bCryptPasswordEncoder);//密码使用BCryptPasswordEncoder()方法验证，因为这里使用了BCryptPasswordEncoder()方法验证。所以在注册用户的时候在接收前台明文密码之后也需要使用BCryptPasswordEncoder().encode(明文密码)方法加密密码,每次密码生成的均不同，但验证均可通过。
+        daoAuthenticationProvider.setHideUserNotFoundExceptions(false);//设置身份认证返回用户自定义消息。不设置则返回bad credentials
         return daoAuthenticationProvider;
     }
 
@@ -78,6 +86,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         filter.setAuthenticationManager(authenticationManagerBean());
         return filter;
     }
-
 
 }

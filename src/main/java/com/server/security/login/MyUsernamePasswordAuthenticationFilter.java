@@ -1,4 +1,4 @@
-package com.server.security;
+package com.server.security.login;
 
 import com.alibaba.fastjson.JSON;
 import org.springframework.http.MediaType;
@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 //重写获取前端提交的用户名、密码方法，以支持获取application/json格式参数
 public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    MyUsernamePasswordAuthenticationFilter() {    //构造函数，设置通过身份验证与未通过执行方法
+    public MyUsernamePasswordAuthenticationFilter() {    //构造函数，设置通过身份验证与未通过执行方法
         setAuthenticationFailureHandler(new MyAuthenticationFailureHandler());
         setAuthenticationSuccessHandler(new MyAuthenticationSuccessHandler());
     }

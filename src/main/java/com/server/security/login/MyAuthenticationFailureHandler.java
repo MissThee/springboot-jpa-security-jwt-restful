@@ -1,4 +1,4 @@
-package com.server.security;
+package com.server.security.login;
 
 import com.alibaba.fastjson.JSONObject;
 import com.server.tool.ResponseOut;
@@ -17,7 +17,6 @@ public class MyAuthenticationFailureHandler extends SimpleUrlAuthenticationFailu
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
-        log.info("登录失败: "+exception );
         JSONObject jO = new JSONObject();
         jO.put("result", false);
         jO.put("msg", exception.getMessage());

@@ -20,48 +20,19 @@ public class CustomErrorController implements ErrorController {
         return "error";
     }
 
-    //自定义404返回，及@RestControllerAdvice不拦截的异常
+    //自定义异常返回
     @RequestMapping(value = "/error")
     public Object error(HttpServletRequest request, HttpServletResponse response) throws IOException {
         JSONObject jO = new JSONObject();
         HttpStatus httpStatus = HttpStatus.valueOf(response.getStatus());
-        jO.put("msg", "/error: " + httpStatus.getReasonPhrase()+". ");
+
+        Exception exception = (Exception) request.getAttribute("javax.servlet.error.exception");
+        if (exception != null) {
+            jO.put("msg", "CustomErrorController: " + exception.getCause() );
+        } else {
+            jO.put("msg", "CustomErrorController: " + httpStatus.getReasonPhrase() );
+        }
         ErrorLogPrinter.logOutPut(request);
         return new ResponseEntity<>(jO, httpStatus);//ResponseEntity 可动态指定返回状态码
     }
-
-//    private void ResUnauthorized(ServletResponse servletResponse) throws IOException {
-//        HttpServletResponse response = (HttpServletResponse) servletResponse;
-//        response.setHeader("Content-Type", "application/json;charset=UTF-8");
-//        response.setHeader("Access-Control-Allow-Origin", "*");
-//        //把返回值输出到客户端
-//        ServletOutputStream out = response.getOutputStream();
-//        out.write(ciphertext.getBytes());
-//        out.flush();
-//    }
-
-//    private static byte[] getRequestBytes(HttpServletResponse response) throws IOException {
-//        int contentLength = response.getBufferSize();
-//        if (contentLength < 0) {
-//            return null;
-//        }
-//        byte buffer[] = new byte[contentLength];
-//        for (int i = 0; i < contentLength; ) {
-//            int readLen = response.getOutputStream().println(buffer, i, contentLength - i);
-//            if (readLen == -1) {
-//                break;
-//            }
-//            i += readLen;
-//        }
-//        return buffer;
-//    }
-//
-//    private static String getRequestStr(HttpServletResponse response) throws IOException {
-//        byte buffer[] = getRequestBytes(response);
-//        String charEncoding = response.getCharacterEncoding();
-//        if (charEncoding == null) {
-//            charEncoding = "UTF-8";
-//        }
-//        return new String(buffer, charEncoding);
-//    }
 }

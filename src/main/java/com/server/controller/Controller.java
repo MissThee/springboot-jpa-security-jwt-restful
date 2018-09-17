@@ -15,28 +15,36 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class Controller {
 
-    @PostMapping(value = "/admin")
+    @RequestMapping(value = "/admin")
     public JSONObject admin() {
         JSONObject jO = new JSONObject();
         jO.put("result", "/admin");
         return jO;
     }
 
-    @PostMapping(value = "/provider")
+    @RequestMapping(value = "/errorFunction")
+    public JSONObject errorFunction() {
+        JSONObject jO = new JSONObject();
+        Integer.parseInt("zxc");
+        jO.put("result", "/admin");
+        return jO;
+    }
+
+    @RequestMapping(value = "/provider")
     public JSONObject provider() {
         JSONObject jO = new JSONObject();
         jO.put("result", "/provider");
         return jO;
     }
 
-    @PostMapping(value = "/user")
+    @RequestMapping(value = "/user")
     public JSONObject user() {
         JSONObject jO = new JSONObject();
         jO.put("result", "/user");
         return jO;
     }
 
-    @PostMapping(value = "/about")
+    @RequestMapping(value = "/about")
     public JSONObject about() {
         JSONObject jO = new JSONObject();
         jO.put("result", "/about");
@@ -45,7 +53,7 @@ public class Controller {
 
     //==================== method annotation ====================
     @DenyAll
-    @PostMapping(value = "/deny")
+    @RequestMapping(value = "/deny")
     public JSONObject deny() {
         System.out.println("all user cant get this!");
         JSONObject jO = new JSONObject();
@@ -54,27 +62,25 @@ public class Controller {
     }
 
     @RolesAllowed({"ADMIN", "PROVIDER"})
-    @PostMapping(value = "/adminAT")
-    public JSONObject adminAT() {
-        System.out.println("!!authentication!!:" + SecurityContextHolder.getContext().getAuthentication());
+    @RequestMapping(value = "/auth1")
+    public JSONObject auth1() {
         JSONObject jO = new JSONObject();
-        jO.put("result", "/adminAT");
+        jO.put("result", "/auth1");
         jO.put("result-getAuthentication", SecurityContextHolder.getContext().getAuthentication());
         return jO;
     }
 
     @RolesAllowed({"ADMIN1", "PROVIDER1"})
-    @PostMapping(value = "/adminAT1")
-    public JSONObject adminAT1() {
-        System.out.println("!!authentication!!:" + SecurityContextHolder.getContext().getAuthentication());
+    @RequestMapping(value = "/auth2")
+    public JSONObject auth2() {
         JSONObject jO = new JSONObject();
-        jO.put("result", "/adminAT1");
+        jO.put("result", "/auth2");
         jO.put("result-getAuthentication", SecurityContextHolder.getContext().getAuthentication());
         return jO;
     }
 
     @PermitAll
-    @PostMapping(value = "/all")
+    @RequestMapping(value = "/all")
     public JSONObject all() {
         JSONObject jO = new JSONObject();
         jO.put("result", "everyone can login !");
@@ -82,14 +88,14 @@ public class Controller {
     }
 
     @PermitAll
-    @PostMapping(value = "/error1")
+    @RequestMapping(value = "/error1")
     public JSONObject error() {
         JSONObject jO = new JSONObject();
         jO.put("result", "error page");
         return jO;
     }
 
-    @PostMapping(value = "/logout1")
+    @RequestMapping(value = "/logout1")
     public JSONObject logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {

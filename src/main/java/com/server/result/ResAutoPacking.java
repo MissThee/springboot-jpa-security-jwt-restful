@@ -11,7 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 //将Controller中返回值默认使用Result.ok()打包
 @ControllerAdvice
-public class _ResPacking implements ResponseBodyAdvice<Object> {
+public class ResAutoPacking implements ResponseBodyAdvice<Object> {
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         return true;
