@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.github.missthee.db.primary.entity.SysUser;
 import com.github.missthee.db.primary.service.intef.SysUserService;
 import com.github.missthee.db.primary.tool.BeanTool;
+import com.github.missthee.tool.Res;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -17,16 +18,20 @@ import java.util.Map;
 
 @RequestMapping(value = "/user")
 @RestController
-public class AccountSettingController {
+public class AccountController {
+
+    private final SysUserService sysUserService;
 
     @Autowired
-    SysUserService sysUserService;
+    public AccountController(SysUserService sysUserService) {
+        this.sysUserService = sysUserService;
+    }
 
     @PutMapping()
     @ApiOperation(value = "新增用户", notes = "提交用户信息，新增用户")
     @ApiImplicitParam(name = "sysUser", value = "用户实体", required = true, dataType = "SysUser", paramType = "application/json")
-    public Object signUp(@RequestBody SysUser sysUser) {
-        return sysUserService.insert(sysUser) != null;
+    public Res insertUser(@RequestBody SysUser sysUser) {
+        return Res.success(sysUserService.insert(sysUser) != null);
     }
 
     @PatchMapping()
@@ -34,10 +39,10 @@ public class AccountSettingController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sysUser", value = "用户实体user", required = true, dataType = "SysUser")
     })
-    public Object changeInfo(@RequestBody SysUser sysUser) {
+    public Res updateUser(@RequestBody SysUser sysUser) {
         SysUser user = sysUserService.selectUserById(sysUser.getId());
         BeanTool.copyPropertiesWithoutNull(sysUser, user);
-        return sysUserService.update(user);
+        return Res.success(sysUserService.update(user));
     }
 
     @DeleteMapping()
@@ -45,66 +50,49 @@ public class AccountSettingController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "用户id", required = true, dataType = "int")
     })
-    public Object deleteInfo(@RequestBody String id) {
-        JSONObject jO = new JSONObject();
-        jO.put("result", sysUserService.delete(id));
-        return jO;
+    public Res deleteUser(@RequestBody String id) {
+        sysUserService.delete(id);
+        return Res.success(true);
     }
 
-    @GetMapping(value = "/getInfo/{id}")
+    @GetMapping(value = "{id}")
     @ApiOperation(value = "查找用户byId", notes = "提交id，获取用户")
     @ApiImplicitParam(name = "id", value = "用户id", required = true, dataType = "int")
-    public Object getInfo(@PathVariable("id") String id) {
-        JSONObject jO = new JSONObject();
-        SysUser sysUser = sysUserService.selectUserById(id);
-        jO.put("result", sysUser);
-        System.out.println(jO.toString());
-        return jO;
+    public Res<SysUser> selectUserById(@PathVariable("id") String id) {
+        return Res.success(sysUserService.selectUserById(id));
     }
 
     @GetMapping(value = "/criteria/{id}")
-    public JSONObject criteria(@PathVariable("id") String id) {
-        JSONObject jO = new JSONObject();
-        jO.put("result", sysUserService.criteria(id));
-        return jO;
-    }
-
-    @GetMapping(value = "/criteria1/{id}")
-    public JSONObject criteria1(@PathVariable("id") String id) {
-        JSONObject jO = new JSONObject();
-        jO.put("result", sysUserService.criteria1(id));
-        return jO;
+    public Res<List<SysUser>> criteria(@PathVariable("id") String id) {
+        return Res.success(sysUserService.criteria(id));
     }
 
     @GetMapping(value = "/graph/{id}")
     @JsonView(SysUser.UserPasswordView.class)
-    public JSONObject test_graph(@PathVariable("id") String id) {
-        JSONObject jO = new JSONObject();
-        jO.put("result", sysUserService.graph(id));
-        return jO;
+    public Res<SysUser> graph(@PathVariable("id") String id) {
+        return Res.success(sysUserService.graph(id));
+//        使用动态语句构建类构建的查询。
+//        实际查询语句为普通嵌套查询，不适合生产环境使用。如查询user列表，查询每个user的role列表，再查询每个role的permission列表。
     }
 
     @GetMapping(value = "/joinFetch/{id}")
-    public List joinFetch(@PathVariable("id") String id) {
-        return sysUserService.joinFetch(id);
+    public Res<List> joinFetch(@PathVariable("id") String id) {
+        return Res.success(sysUserService.joinFetchQuery(id));
+//        使用hql语句构建的查询。(对象构建)
+//        实际查询语句为left join直接关联查询，返回Map集合，可自由组合多表的字段
     }
 
-    @GetMapping(value = "/selectUserById_username/{id}")
-    public JSONObject selectUserById_username(@PathVariable("id") String id) {
-        JSONObject jO = new JSONObject();
-        SysUser sysUser = sysUserService.selectUserById_username(id);
-        sysUser.setRoleList(null);
-        jO.put("result", sysUser);
-        return jO;
+    @GetMapping(value = "/findFirstByUsernameQuery/{username}")
+    public Res<SysUser> findFirstByUsernameQuery(@PathVariable("username") String username) {
+        return Res.success(sysUserService.findFirstByUsernameQuery(username));
+//        使用hql语句构建的查询。(注解构建)
     }
 
     @PostMapping(value = "/multiConditionSearch")
-    public JSONObject multiConditionSearch(@RequestBody JSONObject bJO) {
-        JSONObject jO = new JSONObject();
+    public Res<Page> multiConditionSearch(@RequestBody JSONObject bJO) {
         Map<String, Object> searchMap = bJO.getJSONObject("searchMap");
-        Page page = sysUserService.multiConditionSearch(searchMap);
-        jO.put("result", page);
-        return jO;
+        searchMap = searchMap == null ? new JSONObject() : searchMap;
+        return Res.success(sysUserService.multiConditionSearch(searchMap));
     }
 }
 

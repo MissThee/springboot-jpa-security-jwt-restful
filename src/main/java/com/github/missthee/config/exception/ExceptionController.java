@@ -1,7 +1,7 @@
-package com.server.config.exception;
+package com.github.missthee.config.exception;
 
 import com.alibaba.fastjson.JSONObject;
-import com.server.config.log.builder.LogBuilder;
+import com.github.missthee.config.log.builder.LogBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;

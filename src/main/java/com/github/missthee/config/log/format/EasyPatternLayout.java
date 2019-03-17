@@ -1,4 +1,4 @@
-package com.server.config.log.format;
+package com.github.missthee.config.log.format;
 
 import ch.qos.logback.classic.pattern.*;
 import ch.qos.logback.classic.pattern.color.HighlightingCompositeConverter;

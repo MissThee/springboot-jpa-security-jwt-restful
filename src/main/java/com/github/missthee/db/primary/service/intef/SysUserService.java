@@ -1,4 +1,4 @@
-package com.github.missthee.db.primary.service;
+package com.github.missthee.db.primary.service.intef;
 
 
 import com.alibaba.fastjson.JSONObject;
@@ -6,27 +6,28 @@ import com.github.missthee.db.primary.entity.SysUser;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SysUserService {
     SysUser selectUserById(String id);
 
-    SysUser selectUserById_username(String id);
+    SysUser findFirstByUsernameQuery(String username);
 
     SysUser selectUserByUsername(String loginId);
 
     SysUser insert(SysUser sysUser);
 
-    JSONObject update(SysUser sysUser);
+    SysUser update(SysUser sysUser);
 
-    boolean delete(String id);
+    void delete(String id);
 
-    SysUser test_criteria(String id);
+    List<SysUser> criteria(String id);
 
-    SysUser test_graph(String id);
+    SysUser graph(String id);
 
-    List test_joinFetch(String id);
+    List joinFetchQuery(String id);
 
-    Page test_multiCondition(String username, String nickname);
+    Page multiConditionSearch(Map<String, Object> searchMap);
 
 
 }

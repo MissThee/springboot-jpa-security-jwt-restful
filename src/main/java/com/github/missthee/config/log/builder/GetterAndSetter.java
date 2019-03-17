@@ -1,4 +1,4 @@
-package com.server.config.log.builder;
+package com.github.missthee.config.log.builder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

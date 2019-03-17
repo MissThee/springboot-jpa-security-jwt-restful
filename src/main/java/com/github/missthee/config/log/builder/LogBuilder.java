@@ -1,4 +1,4 @@
-package com.server.config.log.builder;
+package com.github.missthee.config.log.builder;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -80,29 +80,29 @@ public class LogBuilder {
     public static String responseLogAspect(Object returnObj, String headLabel) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("\r\n-------------------↓" + headLabel + "↓--------------------");
-        Class<?> returnValueClass = returnObj.getClass();
-        Field[] declaredFields = returnValueClass.getDeclaredFields();
-
-        if (BASE_TYPE_LIST.contains(returnValueClass)) {
-            stringBuilder.append("\r\nRES : " + returnObj);
-        } else {
-
-            for (Field field : declaredFields) {
-                try {
-                    String propertyName = field.getName();
-                    Object value = GetterAndSetter.invokeGetMethod(returnObj, field.getName());
-                    String valueStr;
-                    try {
-                        valueStr = JSON.toJSONString(value);
-                    } catch (Exception ignord) {
-                        valueStr = String.valueOf(value);
-                    }
-                    stringBuilder.append("\r\n" + String.format("%-8s", propertyName.toUpperCase()) + " : " + valueStr);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        stringBuilder.append("\r\nRES : " + returnObj);
+//        Class<?> returnValueClass = returnObj.getClass();
+//        Field[] declaredFields = returnValueClass.getDeclaredFields();
+//        if (BASE_TYPE_LIST.contains(returnValueClass)) {
+//            stringBuilder.append("\r\nRES : " + returnObj);
+//        } else {
+//
+//            for (Field field : declaredFields) {
+//                try {
+//                    String propertyName = field.getName();
+//                    Object value = GetterAndSetter.invokeGetMethod(returnObj, field.getName());
+//                    String valueStr;
+//                    try {
+//                        valueStr = JSON.toJSONString(value);
+//                    } catch (Exception ignord) {
+//                        valueStr = String.valueOf(value);
+//                    }
+//                    stringBuilder.append("\r\n" + String.format("%-8s", propertyName.toUpperCase()) + " : " + valueStr);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
         stringBuilder.append("\r\n-------------------↑" + headLabel + "↑--------------------");
         return stringBuilder.toString();
     }

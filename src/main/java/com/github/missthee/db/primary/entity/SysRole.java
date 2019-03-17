@@ -1,11 +1,13 @@
-package com.server.db.primary.entity;
+package com.github.missthee.db.primary.entity;
 
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -15,7 +17,8 @@ import java.util.Set;
 @Accessors(chain = true)
 public class SysRole {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(generator = "JpaSnowflakeIdGenerator")
+    @GenericGenerator(name = "JpaSnowflakeIdGenerator", strategy = "com.github.missthee.db.common.IdGenerator.JpaSnowflakeIdGenerator")
     private String id; // 编号
     private String role; // 角色标识程序中判断使用,如"admin",这个是唯一的:
     private String name; // 角色名

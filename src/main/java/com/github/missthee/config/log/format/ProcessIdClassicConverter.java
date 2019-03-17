@@ -1,4 +1,4 @@
-package com.server.config.log.format;
+package com.github.missthee.config.log.format;
 
 import ch.qos.logback.classic.pattern.ClassicConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;

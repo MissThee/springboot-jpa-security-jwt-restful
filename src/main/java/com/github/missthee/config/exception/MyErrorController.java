@@ -1,4 +1,4 @@
-package com.server.config.exception;
+package com.github.missthee.config.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.web.ServerProperties;

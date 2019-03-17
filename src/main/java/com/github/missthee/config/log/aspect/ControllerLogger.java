@@ -1,6 +1,6 @@
-package com.server.config.log.aspect;
+package com.github.missthee.config.log.aspect;
 
-import com.server.config.log.builder.LogBuilder;
+import com.github.missthee.config.log.builder.LogBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

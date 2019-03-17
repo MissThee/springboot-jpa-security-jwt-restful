@@ -1,4 +1,4 @@
-package com.server.db.primary.tool;
+package com.github.missthee.db.primary.tool;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;

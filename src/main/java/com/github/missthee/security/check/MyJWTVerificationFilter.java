@@ -1,12 +1,11 @@
-package com.server.security.check;
+package com.github.missthee.security.check;
 
-import com.server.db.primary.entity.SysPermission;
-import com.server.db.primary.entity.SysRole;
-import com.server.db.primary.entity.SysUser;
-import com.server.db.primary.repository.UserRepository;
-import com.server.jwt.JavaJWT;
-import com.server.tool.ResponseOut;
-import lombok.experimental.Accessors;
+import com.github.missthee.db.primary.entity.SysPermission;
+import com.github.missthee.db.primary.entity.SysRole;
+import com.github.missthee.db.primary.entity.SysUser;
+import com.github.missthee.db.primary.repository.UserRepository;
+import com.github.missthee.jwt.JavaJWT;
+import com.github.missthee.security.utils.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,6 +13,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -21,37 +24,36 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @Component
 public class MyJWTVerificationFilter extends OncePerRequestFilter {
-
-    private final UserRepository userRepository;
+    private final UserInfo userInfo;
+    private final JavaJWT javaJWT;
 
     @Autowired
-    public MyJWTVerificationFilter(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public MyJWTVerificationFilter(JavaJWT javaJWT, UserInfo userInfo) {
+        this.javaJWT = javaJWT;
+        this.userInfo = userInfo;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        String token = httpServletRequest.getHeader("Authorization");
-        if (JavaJWT.verifyToken(token)) {
-            String userId = JavaJWT.getId(token);
-            List<String> authList = getAuthList(userId);
-            List<SimpleGrantedAuthority> list = new ArrayList<>();
-            for (String auth : authList) {
-                list.add(new SimpleGrantedAuthority(auth));
-            }
-            Authentication authentication = new UsernamePasswordAuthenticationToken(userId, null, list);
-            SecurityContext securityContext = new SecurityContextImpl();
-            securityContext.setAuthentication(authentication);
-            SecurityContextHolder.setContext(securityContext);
-        }
-        filterChain.doFilter(httpServletRequest, httpServletResponse);
+//        String token = httpServletRequest.getHeader("Authorization");
+////        if (javaJWT.verifyToken(token)) {
+////            String userId = javaJWT.getId(token);
+////            UserDetails userDetails = userInfo.loadUserById(userId);
+////            Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
+////            SecurityContext securityContext = new SecurityContextImpl();
+////            securityContext.setAuthentication(authentication);
+////            SecurityContextHolder.setContext(securityContext);
+////
+////        }
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        SessionRegistry sessionRegistry = new SessionRegistryImpl();
+//        SessionInformation sessionInformation = sessionRegistry.getSessionInformation(token);
+//        List<Object> allPrincipals = sessionRegistry.getAllPrincipals();
+       filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
     @Override
@@ -59,17 +61,5 @@ public class MyJWTVerificationFilter extends OncePerRequestFilter {
 
     }
 
-    private List<String> getAuthList(String userId) {
-        SysUser sysUser = userRepository.findFirstById(userId);
-        List<String> list = new ArrayList<>(); //GrantedAuthority是security提供的权限类，
-        Set<SysRole> roleList = sysUser.getRoleList();
-        for (SysRole role : roleList) {
-            list.add("ROLE_" + role.getRole());
-            for (SysPermission permission : role.getPermissionList()) {
-                list.add(permission.getPermission());
-            }
-        }
-        //权限如果前缀是ROLE_，security就会认为这是个角色信息，而不是权限，例如ROLE_MENBER就是MENBER角色，CAN_SEND就是CAN_SEND权限
-        return list;
-    }
+
 }
