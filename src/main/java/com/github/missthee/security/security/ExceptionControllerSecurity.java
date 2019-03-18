@@ -1,4 +1,4 @@
-package com.github.missthee.security;
+package com.github.missthee.security.security;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.missthee.config.log.builder.LogBuilder;

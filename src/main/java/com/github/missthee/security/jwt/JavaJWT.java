@@ -1,4 +1,4 @@
-package com.github.missthee.jwt;
+package com.github.missthee.security.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
@@ -26,14 +25,14 @@ public class JavaJWT {
     private final String issuer = "spring-project";
     private final UserInfoForJWT userInfoForJWT;
 
+    @Autowired
+    public JavaJWT(UserInfoForJWT userInfoForJWT) {
+        this.userInfoForJWT = userInfoForJWT;
+    }
+
     @Value("${jwt.token.key:Authorization}")
     public void setJWT_TOKEN_KEY(String a) {
         JWT_TOKEN_KEY = a;
-    }
-
-    @Autowired
-    public JavaJWT(UserInfoForJWT userSecretForJWT) {
-        this.userInfoForJWT = userSecretForJWT;
     }
 
     /**

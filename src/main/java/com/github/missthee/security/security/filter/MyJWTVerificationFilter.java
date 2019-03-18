@@ -1,4 +1,4 @@
-package com.github.missthee.security.check;
+package com.github.missthee.security.security.filter;
 
 import com.github.missthee.security.jwt.JavaJWT;
 import org.springframework.beans.factory.annotation.Autowired;

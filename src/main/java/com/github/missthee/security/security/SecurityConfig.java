@@ -1,4 +1,4 @@
-package com.github.missthee.security;
+package com.github.missthee.security.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
