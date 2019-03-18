@@ -27,7 +27,7 @@ public class AuthTestController {
         return Res.success("all user cant get this!");
     }
 
-    @PreAuthorize("hasRole('ADMIN') and hasRole('PROVIDER')")
+    @PreAuthorize("hasRole('ADMIN') and hasRole('PROVIDER1')")
     @RequestMapping(value = "/auth")
     public Res auth() {
         return Res.success(SecurityContextHolder.getContext().getAuthentication(), "/auth");

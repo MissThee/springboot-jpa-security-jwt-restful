@@ -7,8 +7,8 @@ import com.github.missthee.db.primary.entity.SysUser_;
 import com.github.missthee.db.primary.repository.UserRepository;
 import com.github.missthee.db.primary.service.intef.SysUserService;
 
-import com.github.missthee.jwt.UserInfoForJWT;
-import com.github.missthee.security.utils.UserInfo;
+import com.github.missthee.security.jwt.UserInfoForJWT;
+import com.github.missthee.security.security.filter.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -148,20 +148,14 @@ public class SysUserServiceImp implements SysUserService, UserInfoForJWT, UserIn
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        SysUser sysUser = userRepository.findFirstByUsernameQuery(username);
-        return getUserDetails(sysUser, username);
-    }
-
-    @Override
     public UserDetails loadUserById(String id) throws UsernameNotFoundException {
         SysUser sysUser = userRepository.findFirstById(id);
-        return getUserDetails(sysUser, id);
+        return transToUserDetails(sysUser);
     }
 
-    private UserDetails getUserDetails(SysUser sysUser, String userKey) {
+    private UserDetails transToUserDetails(SysUser sysUser) {
         if (sysUser == null) {
-            throw new UsernameNotFoundException("User not found [" + userKey + "]", new Throwable());
+            throw new UsernameNotFoundException("User not found", new Throwable());
         }
         List<String> authList = new ArrayList<>(); //GrantedAuthority是security提供的权限类，
         Set<SysRole> roleList = sysUser.getRoleList();

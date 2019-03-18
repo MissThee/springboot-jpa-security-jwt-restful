@@ -1,10 +1,9 @@
-package com.github.missthee.security.utils;
+package com.github.missthee.security.check;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
+import org.springframework.transaction.annotation.Transactional;
+@Transactional
 public interface UserInfo {
-    UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
-
     UserDetails loadUserById(String id) throws UsernameNotFoundException;
 }
