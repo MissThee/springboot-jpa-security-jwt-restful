@@ -1,8 +1,8 @@
 package com.github.missthee.config.log.builder;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.http.HttpHeaders;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +30,7 @@ public class LogBuilder {
             Object[] argsObj = joinPoint.getArgs();
             List<Object> argsObjList = Arrays.stream(argsObj).filter(e -> !(e instanceof HttpServletRequest || e instanceof HttpServletResponse || e instanceof HttpHeaders)).collect(Collectors.toList());//筛选掉HttpServlet相关参数
             try {
-                stringBuilder.append(paramFormatter("ARGS[J]", JSONArray.toJSONString(argsObjList)));
+                stringBuilder.append(paramFormatter("ARGS[J]", new ObjectMapper().writeValueAsString(argsObjList)));
             } catch (Exception e) {
                 stringBuilder.append(paramFormatter("ARGS", argsObjList));
             }
@@ -95,8 +95,8 @@ public class LogBuilder {
                 Object value = GetterAndSetter.invokeGetMethod(returnObj, field.getName());
                 String valueStr;
                 try {
-                    valueStr = JSON.toJSONString(value);
-                } catch (Exception ignord) {
+                    valueStr = new ObjectMapper().writeValueAsString(value);
+                } catch (Exception ignored) {
                     valueStr = String.valueOf(value);
                 }
                 resContent.append(paramFormatter(propertyName.toUpperCase(), valueStr));

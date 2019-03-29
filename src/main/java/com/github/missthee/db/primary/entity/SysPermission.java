@@ -21,7 +21,7 @@ public class SysPermission implements Serializable {
 //    @GeneratedValue(strategy = GenerationType.TABLE, generator = "PK_GEN")
 //    @TableGenerator(pkColumnValue = "SYS_PERMISSION", name = "PK_GEN", table = "TB_GENERATOR", pkColumnName = "GEN_NAME", valueColumnName = "GEN_VALUE", allocationSize = 1)
     @GeneratedValue(generator = "JpaSnowflakeIdGenerator")
-    @GenericGenerator(name = "JpaSnowflakeIdGenerator", strategy = "com.github.missthee.db.common.IdGenerator.JpaSnowflakeIdGenerator")
+    @GenericGenerator(name = "JpaSnowflakeIdGenerator", strategy = "com.github.missthee.db.common.idgenerator.JpaSnowflakeIdGenerator")
     private String id;//主键.
     private String name;//名称.
     private Integer resourceType;//资源类型，[1、menu|2、button]

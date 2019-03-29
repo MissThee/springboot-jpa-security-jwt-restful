@@ -1,6 +1,5 @@
 package com.github.missthee.tool;
 
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -8,6 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class FileRec {
@@ -32,8 +33,8 @@ public class FileRec {
 
     //上传至/files/upload/
     ///返回0成功 1出错 2没有文件 3文件过大
-    public static JSONObject fileUpload(MultipartFile file, String path) {
-        JSONObject res = new JSONObject();
+    public static Map<String,Object> fileUpload(MultipartFile file, String path) {
+        Map<String,Object> res = new HashMap<>();
         if (file.isEmpty()) {
             res.put("result", false);
             res.put("msg", "没有文件");
@@ -86,7 +87,7 @@ public class FileRec {
         return res;
     }
 
-    public static JSONObject fileUpload(MultipartFile file) {
+    public static Map<String,Object> fileUpload(MultipartFile file) {
         return fileUpload(file, "");
     }
 }

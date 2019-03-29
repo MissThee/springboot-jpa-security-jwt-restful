@@ -1,18 +1,18 @@
 package com.github.missthee.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.github.missthee.db.primary.entity.SysUser;
 import com.github.missthee.db.primary.service.intef.SysUserService;
-import com.github.missthee.db.primary.tool.BeanTool;
 import com.github.missthee.tool.Res;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,10 +21,12 @@ import java.util.Map;
 public class AccountController {
 
     private final SysUserService sysUserService;
+    private final MapperFacade mapperFacade;
 
     @Autowired
-    public AccountController(SysUserService sysUserService) {
+    public AccountController(SysUserService sysUserService, MapperFacade mapperFacade) {
         this.sysUserService = sysUserService;
+        this.mapperFacade = mapperFacade;
     }
 
     @PutMapping()
@@ -41,7 +43,7 @@ public class AccountController {
     })
     public Res updateUser(@RequestBody SysUser sysUser) {
         SysUser user = sysUserService.selectUserById(sysUser.getId());
-        BeanTool.copyPropertiesWithoutNull(sysUser, user);
+        mapperFacade.map(sysUser, user);
         return Res.success(sysUserService.update(user));
     }
 
@@ -89,9 +91,9 @@ public class AccountController {
     }
 
     @PostMapping(value = "/multiConditionSearch")
-    public Res<Page> multiConditionSearch(@RequestBody JSONObject bJO) {
-        Map<String, Object> searchMap = bJO.getJSONObject("searchMap");
-        searchMap = searchMap == null ? new JSONObject() : searchMap;
+    public Res<Page> multiConditionSearch(@RequestBody Map<String,Object> bJO) {
+        Map<String, Object> searchMap =(Map<String, Object>) bJO.get("searchMap");
+        searchMap = searchMap == null ? new HashMap<>() : searchMap;
         return Res.success(sysUserService.multiConditionSearch(searchMap));
     }
 }

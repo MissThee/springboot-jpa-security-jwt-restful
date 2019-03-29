@@ -1,6 +1,8 @@
 package com.github.missthee.db.primary.tool;
 
 import org.hibernate.SQLQuery;
+import org.hibernate.query.internal.NativeQueryImpl;
+import org.hibernate.query.internal.QueryImpl;
 import org.hibernate.transform.Transformers;
 
 import javax.persistence.NoResultException;
@@ -12,8 +14,8 @@ import java.util.*;
  */
 public class QueryTool {
     //查询返回List<Map>
-    public static List<Map<String, Object>> hibernateQueryList(Query query) {
-        query.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+    public static List<Map<String, Object>> list(Query query) {
+        query.unwrap(NativeQueryImpl.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
         List<Map<String, Object>> result = query.getResultList();
         List<Map<String, Object>> dataList = new ArrayList<>();
         for (Map<String, Object> row : result) {
@@ -28,8 +30,8 @@ public class QueryTool {
     }
 
     //查询返回map
-    public static Map hibernateQueryMap(Query query) {
-        query.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+    public static Map map(Query query) {
+        query.unwrap(NativeQueryImpl.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
         Map<String, Object> dataMap = new HashMap<>();
         Object resultObj;
         try {

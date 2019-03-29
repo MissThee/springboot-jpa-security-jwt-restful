@@ -1,6 +1,5 @@
-package com.github.missthee.security.security;
+package com.github.missthee.config.security.security;
 
-import com.alibaba.fastjson.JSONObject;
 import com.github.missthee.config.log.builder.LogBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
@@ -14,6 +13,8 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import java.nio.file.AccessDeniedException;
+import java.util.HashMap;
+import java.util.Map;
 
 //controller异常捕捉返回
 @ApiIgnore
@@ -27,9 +28,9 @@ public class ExceptionControllerSecurity {
     @ResponseStatus(code = HttpStatus.FORBIDDEN)
     public Object unauthorizedException(HttpServletRequest request, Exception e) {
         log.debug(LogBuilder.requestLogBuilder(request,null, e));
-        JSONObject jO = new JSONObject();
-        jO.put("msg", "UnauthorizedException:" + HttpStatus.FORBIDDEN.getReasonPhrase());
-        return jO;
+        Map<String,Object> map = new HashMap<>();
+        map.put("msg", "UnauthorizedException:" + HttpStatus.FORBIDDEN.getReasonPhrase());
+        return map;
     }
 
     //需要登录
@@ -38,8 +39,8 @@ public class ExceptionControllerSecurity {
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
     public Object unauthenticatedException(HttpServletRequest request, Exception e) {
         log.debug(LogBuilder.requestLogBuilder(request,null, e));
-        JSONObject jO = new JSONObject();
-        jO.put("msg", "UnauthenticatedException:" + HttpStatus.UNAUTHORIZED.getReasonPhrase());
-        return jO;
+        Map<String,Object> map = new HashMap<>();
+        map.put("msg", "UnauthenticatedException:" + HttpStatus.UNAUTHORIZED.getReasonPhrase());
+        return map;
     }
 }

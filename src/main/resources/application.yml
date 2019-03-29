@@ -27,12 +27,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.MySQL5InnoDBDialect #不加这句则默认为myisam引擎  org.hibernate.dialect.Oracle10gDialect
-  #    open-in-view: true
-  devtools:
-    restart:
-      enabled: false  #热部署
-      additional-paths: src/main/java #热部署-设置重启的目录
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect #不加这句则默认为MyISAM引擎  org.hibernate.dialect.Oracle10gDialect
+    open-in-view: true
   session:
     store-type: REDIS
   redis:
@@ -40,8 +36,8 @@ spring:
   mvc:
     favicon:
       enabled: false
-#  jackson:
-#    date-format: yyyy-MM-dd HH:mm:ss
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
 #    time-zone: GMT+8
 
 #热部署-classpath目录下的WEB-INF文件夹内容修改不重启

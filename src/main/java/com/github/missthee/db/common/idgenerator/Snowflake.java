@@ -1,4 +1,4 @@
-package com.github.missthee.db.common.IdGenerator;
+package com.github.missthee.db.common.idgenerator;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -179,8 +179,7 @@ public class Snowflake {
         Snowflake idWorker = new Snowflake(0, 0);
         for (int i = 0; i < 1000; i++) {
             long id = idWorker.nextId();
-            System.out.println(Long.toBinaryString(id));
-            System.out.println(id);
+            System.out.println(Long.toBinaryString(id)+"   "+id);
         }
     }
 }

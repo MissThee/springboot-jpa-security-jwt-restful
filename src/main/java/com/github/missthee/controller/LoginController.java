@@ -1,21 +1,16 @@
 package com.github.missthee.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.github.missthee.db.primary.service.intef.SysUserService;
 import com.github.missthee.tool.Res;
-import com.google.common.base.Joiner;
-import com.github.missthee.db.primary.entity.SysPermission;
-import com.github.missthee.db.primary.entity.SysRole;
 import com.github.missthee.db.primary.entity.SysUser;
-import com.github.missthee.security.jwt.JavaJWT;
+import com.github.missthee.config.security.jwt.JavaJWT;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.Map;
 
 @RestController
 public class LoginController {
@@ -25,12 +20,12 @@ public class LoginController {
     JavaJWT javaJWT;
 
     @PostMapping(value = "/login")
-    public Res loginProcess(HttpServletResponse httpServletResponse, @RequestBody(required = false) JSONObject bJO) throws Exception {
+    public Res loginProcess(HttpServletResponse httpServletResponse, @RequestBody(required = false) Map<String, Object> bJO) throws Exception {
         String username;
         String password;
 
         if (bJO.containsKey("username")) {
-            username = bJO.getString("username");
+            username = (String) bJO.get("username");
             if (StringUtils.isEmpty(username)) {
                 return Res.failure("用户名不能为空");
             }
@@ -38,7 +33,7 @@ public class LoginController {
             return Res.failure("用户名不能为空");
         }
         if (bJO.containsKey("password")) {
-            password = bJO.getString("password");
+            password = (String) bJO.get("password");
             if (StringUtils.isEmpty(password)) {
                 return Res.failure("密码不能为空");
             }

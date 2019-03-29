@@ -43,7 +43,7 @@ public class SysUser implements Serializable {
 //    @GeneratedValue(strategy = GenerationType.TABLE, generator = "PK_GEN")
 //    @TableGenerator(pkColumnValue = "SYS_USER", name = "PK_GEN", table = "TB_GENERATOR", pkColumnName = "GEN_NAME", valueColumnName = "GEN_VALUE", allocationSize = 1)
     @GeneratedValue(generator = "JpaSnowflakeIdGenerator")
-    @GenericGenerator(name = "JpaSnowflakeIdGenerator", strategy = "com.github.missthee.db.common.IdGenerator.JpaSnowflakeIdGenerator")
+    @GenericGenerator(name = "JpaSnowflakeIdGenerator", strategy = "com.github.missthee.db.common.idgenerator.JpaSnowflakeIdGenerator")
     private String id;
     @Column(unique = true)
     private String username; //帐号

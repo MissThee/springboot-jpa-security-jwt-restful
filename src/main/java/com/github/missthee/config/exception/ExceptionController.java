@@ -1,6 +1,5 @@
 package com.github.missthee.config.exception;
 
-import com.alibaba.fastjson.JSONObject;
 import com.github.missthee.config.log.builder.LogBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
@@ -14,6 +13,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 //controller异常捕捉返回
 @ApiIgnore
@@ -28,13 +29,13 @@ public class ExceptionController {
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     public Object httpMessageNotReadableException(HttpServletRequest request, Exception e) {
         log.debug(LogBuilder.requestLogBuilder(request, e));
-        JSONObject jO = new JSONObject();
+        Map<String,Object> res = new HashMap<>();
         if (String.valueOf(e).contains("Required request body is missing")) {
-            jO.put("msg", "HttpMessageNotReadableException: 请求体缺少body。" + e);
+            res.put("msg", "HttpMessageNotReadableException: 请求体缺少body。" + e);
         } else {
-            jO.put("msg", "HttpMessageNotReadableException: 无法正确读取请求中的参数。" + e);
+            res.put("msg", "HttpMessageNotReadableException: 无法正确读取请求中的参数。" + e);
         }
-        return jO;
+        return res;
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)
@@ -42,14 +43,14 @@ public class ExceptionController {
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     public Object missingRequestHeaderExceptionException(HttpServletRequest request, Exception e) {
         log.debug(LogBuilder.requestLogBuilder(request, e));
-        JSONObject jO = new JSONObject();
+        Map<String,Object> res = new HashMap<>();
         String paramName = null;
         try {
             paramName = String.valueOf(e).substring(String.valueOf(e).indexOf("'") + 1, String.valueOf(e).lastIndexOf("'"));
         } catch (Exception ignored) {
         }
-        jO.put("msg", (paramName == null ? "" : "MissingRequestHeaderException: 请求体header中缺少必须的参数【" + paramName + "】。") + e);
-        return jO;
+        res.put("msg", (paramName == null ? "" : "MissingRequestHeaderException: 请求体header中缺少必须的参数【" + paramName + "】。") + e);
+        return res;
     }
 
     //运行时所有异常
@@ -60,9 +61,9 @@ public class ExceptionController {
     public Object exceptionHandler(HttpServletRequest request, Exception e) {
         log.debug(LogBuilder.requestLogBuilder(request, e));
         e.printStackTrace();
-        JSONObject jO = new JSONObject();
-        jO.put("msg", "Exception: " + e);
-        return jO;
+        Map<String,Object> res = new HashMap<>();
+        res.put("msg", "Exception: " + e);
+        return res;
     }
 
 }

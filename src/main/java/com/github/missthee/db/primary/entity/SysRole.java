@@ -20,7 +20,7 @@ public class SysRole {
 //    @GeneratedValue(strategy = GenerationType.TABLE, generator = "PK_GEN")
 //    @TableGenerator(pkColumnValue = "SYS_ROLE", name = "PK_GEN", table = "TB_GENERATOR", pkColumnName = "GEN_NAME", valueColumnName = "GEN_VALUE", allocationSize = 1)
     @GeneratedValue(generator = "JpaSnowflakeIdGenerator")
-    @GenericGenerator(name = "JpaSnowflakeIdGenerator", strategy = "com.github.missthee.db.common.IdGenerator.JpaSnowflakeIdGenerator")
+    @GenericGenerator(name = "JpaSnowflakeIdGenerator", strategy = "com.github.missthee.db.common.idgenerator.JpaSnowflakeIdGenerator")
     private String id; // 编号
     private String role; // 角色标识程序中判断使用,如"admin",这个是唯一的:
     private String name; // 角色名

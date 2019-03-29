@@ -7,8 +7,8 @@ import com.github.missthee.db.primary.entity.SysUser_;
 import com.github.missthee.db.primary.repository.UserRepository;
 import com.github.missthee.db.primary.service.intef.SysUserService;
 
-import com.github.missthee.security.jwt.UserInfoForJWT;
-import com.github.missthee.security.security.filter.UserInfo;
+import com.github.missthee.config.security.jwt.UserInfoForJWT;
+import com.github.missthee.config.security.security.filter.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

@@ -1,4 +1,4 @@
-package com.github.missthee.security.jwt;
+package com.github.missthee.config.security.jwt;
 
 public interface UserInfoForJWT {
     /**

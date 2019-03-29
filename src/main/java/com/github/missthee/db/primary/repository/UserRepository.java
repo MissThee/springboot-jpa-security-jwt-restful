@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.lang.Nullable;
 
-public interface UserRepository extends JpaRepository<SysUser, String>, JpaSpecificationExecutor<SysUser> {
+public interface UserRepository extends JpaRepository<SysUser, String> , JpaSpecificationExecutor<SysUser>{
 
     @EntityGraph(value = "SysUser.g1", type = EntityGraph.EntityGraphType.LOAD)
     @Query(value = "select t from SysUser t where t.username=:username")
