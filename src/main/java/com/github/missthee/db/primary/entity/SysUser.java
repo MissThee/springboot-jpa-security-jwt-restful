@@ -54,10 +54,9 @@ public class SysUser implements Serializable {
     private byte state;      //用户状态
 
     // 用户 - 角色关系;
-    @JsonIgnoreProperties(value = {"userList"})
     @ManyToMany(fetch = FetchType.LAZY)
     @NotFound(action = NotFoundAction.IGNORE)
-    @JoinTable(name = "sys_user_role", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "role_id")}, foreignKey = @ForeignKey(name = "none", value = ConstraintMode.NO_CONSTRAINT))
+    @JoinTable(name = "sys_user_role", joinColumns = {@JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "none"))}, inverseJoinColumns = {@JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "none"))})
     private Set<SysRole> roleList;
 }
 

@@ -18,6 +18,8 @@ import java.util.List;
 @Accessors(chain = true)
 public class SysPermission implements Serializable {
     @Id
+//    @GeneratedValue(strategy = GenerationType.TABLE, generator = "PK_GEN")
+//    @TableGenerator(pkColumnValue = "SYS_PERMISSION", name = "PK_GEN", table = "TB_GENERATOR", pkColumnName = "GEN_NAME", valueColumnName = "GEN_VALUE", allocationSize = 1)
     @GeneratedValue(generator = "JpaSnowflakeIdGenerator")
     @GenericGenerator(name = "JpaSnowflakeIdGenerator", strategy = "com.github.missthee.db.common.IdGenerator.JpaSnowflakeIdGenerator")
     private String id;//主键.
@@ -28,7 +30,7 @@ public class SysPermission implements Serializable {
     private Boolean available = true;// 是否可用
     @ManyToMany(fetch = FetchType.LAZY)
     @NotFound(action = NotFoundAction.IGNORE)
-    @JoinTable(name = "sys_permission_note", joinColumns = {@JoinColumn(name = "permission_id")}, inverseJoinColumns = {@JoinColumn(name = "note_id")}, foreignKey = @ForeignKey(name = "none", value = ConstraintMode.NO_CONSTRAINT))
+    @JoinTable(name = "sys_permission_note", joinColumns = {@JoinColumn(name = "permission_id", foreignKey = @ForeignKey(name = "none"))}, inverseJoinColumns = {@JoinColumn(name = "note_id", foreignKey = @ForeignKey(name = "none"))})
     private List<SysNote> noteList;
 //开启以下映射关系，需要将@Data换为@Setter @Getter，使用@Data，其中@ToString会将双向多对多字段内容死循环遍历输出，导致堆栈溢出错误
 //    // 权限 - 角色关系;

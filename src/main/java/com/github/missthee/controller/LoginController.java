@@ -25,7 +25,7 @@ public class LoginController {
     JavaJWT javaJWT;
 
     @PostMapping(value = "/login")
-    public Res loginProcess(HttpServletResponse res, @RequestBody(required = false) JSONObject bJO) throws Exception {
+    public Res loginProcess(HttpServletResponse httpServletResponse, @RequestBody(required = false) JSONObject bJO) throws Exception {
         String username;
         String password;
 
@@ -51,11 +51,10 @@ public class LoginController {
         } catch (Exception e) {
             return Res.failure("无此用户");
         }
-        if (new BCryptPasswordEncoder().matches(password, sysUser.getPassword())) {
-            res.setHeader("Authorization", javaJWT.createToken(sysUser.getId(), 15));
-            return Res.success("登录成功");
-        } else {
+        if (!new BCryptPasswordEncoder().matches(password, sysUser.getPassword())) {
             return Res.failure("密码错误");
         }
+        httpServletResponse.setHeader("Authorization", javaJWT.createToken(sysUser.getId(), 15));
+        return Res.success("登录成功");
     }
 }

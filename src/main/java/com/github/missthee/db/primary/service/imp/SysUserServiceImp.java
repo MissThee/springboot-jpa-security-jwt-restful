@@ -66,7 +66,6 @@ public class SysUserServiceImp implements SysUserService, UserInfoForJWT, UserIn
 
     @Override
     public SysUser insert(SysUser sysUser) {
-        sysUser.setId(null);
         String encodedPassword = new BCryptPasswordEncoder().encode(sysUser.getPassword());
         sysUser.setPassword(encodedPassword);
         return userRepository.saveAndFlush(sysUser);

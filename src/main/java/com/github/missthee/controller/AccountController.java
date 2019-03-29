@@ -31,7 +31,7 @@ public class AccountController {
     @ApiOperation(value = "新增用户", notes = "提交用户信息，新增用户")
     @ApiImplicitParam(name = "sysUser", value = "用户实体", required = true, dataType = "SysUser", paramType = "application/json")
     public Res insertUser(@RequestBody SysUser sysUser) {
-        return Res.success(sysUserService.insert(sysUser) != null);
+        return Res.res(sysUserService.insert(sysUser) != null);
     }
 
     @PatchMapping()

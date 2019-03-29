@@ -17,6 +17,8 @@ import java.util.Set;
 @Accessors(chain = true)
 public class SysRole {
     @Id
+//    @GeneratedValue(strategy = GenerationType.TABLE, generator = "PK_GEN")
+//    @TableGenerator(pkColumnValue = "SYS_ROLE", name = "PK_GEN", table = "TB_GENERATOR", pkColumnName = "GEN_NAME", valueColumnName = "GEN_VALUE", allocationSize = 1)
     @GeneratedValue(generator = "JpaSnowflakeIdGenerator")
     @GenericGenerator(name = "JpaSnowflakeIdGenerator", strategy = "com.github.missthee.db.common.IdGenerator.JpaSnowflakeIdGenerator")
     private String id; // 编号
@@ -28,7 +30,7 @@ public class SysRole {
     // 角色 - 权限关系;
     @ManyToMany(fetch = FetchType.LAZY)
     @NotFound(action = NotFoundAction.IGNORE)
-    @JoinTable(name = "sys_role_permission", joinColumns = {@JoinColumn(name = "role_id")}, inverseJoinColumns = {@JoinColumn(name = "permission_id")}, foreignKey = @ForeignKey(name = "none", value = ConstraintMode.NO_CONSTRAINT))
+    @JoinTable(name = "sys_role_permission", joinColumns = {@JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "none"))}, inverseJoinColumns = {@JoinColumn(name = "permission_id", foreignKey = @ForeignKey(name = "none"))} )
     private Set<SysPermission> permissionList;
 //开启以下映射关系，需要将@Data换为@Setter @Getter，使用@Data，其中@ToString会将双向多对多字段内容死循环遍历输出，导致堆栈溢出错误
 //    // 角色 - 用户关系;
