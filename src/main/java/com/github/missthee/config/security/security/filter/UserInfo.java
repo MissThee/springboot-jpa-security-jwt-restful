@@ -1,4 +1,4 @@
-package com.github.missthee.security.security.filter;
+package com.github.missthee.config.security.security.filter;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

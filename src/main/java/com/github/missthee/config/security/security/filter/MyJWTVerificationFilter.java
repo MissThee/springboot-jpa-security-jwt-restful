@@ -1,6 +1,6 @@
-package com.github.missthee.security.security.filter;
+package com.github.missthee.config.security.security.filter;
 
-import com.github.missthee.security.jwt.JavaJWT;
+import com.github.missthee.config.security.jwt.JavaJWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
