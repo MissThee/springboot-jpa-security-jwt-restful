@@ -22,5 +22,4 @@ public interface UserRepository extends JpaRepository<SysUser, String> , JpaSpec
     @EntityGraph(value = "SysUser.g1", type = EntityGraph.EntityGraphType.FETCH)
     Page<SysUser> findAll(@Nullable Specification<SysUser> var1, Pageable var2);
 
-    SysUser findFirstByUsername(String username);
 }

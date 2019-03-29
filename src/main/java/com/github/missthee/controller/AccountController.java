@@ -91,10 +91,15 @@ public class AccountController {
     }
 
     @PostMapping(value = "/multiConditionSearch")
-    public Res<Page> multiConditionSearch(@RequestBody Map<String,Object> bJO) {
-        Map<String, Object> searchMap =(Map<String, Object>) bJO.get("searchMap");
+    public Res multiConditionSearch(@RequestBody Map<String, Object> bJO) {
+        Map<String, Object> searchMap = (Map<String, Object>) bJO.get("searchMap");
         searchMap = searchMap == null ? new HashMap<>() : searchMap;
-        return Res.success(sysUserService.multiConditionSearch(searchMap));
+
+        Page page = sysUserService.multiConditionSearch(searchMap);
+        return Res.success(new HashMap<String, Object>() {{
+            put("content", page.getContent());
+            put("total", page.getTotalElements());
+        }});
     }
 }
 
