@@ -1,7 +1,8 @@
 logging:
-  file: ./log_application
+  file:
+   name: ./log_application
 server:
-  port: 8080
+  port: 8088
   tomcat:
     basedir: ./log_tomcat
     accesslog:
@@ -10,9 +11,9 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/spring_boot_security?useUnicode=true&characterEncoding=utf8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai&nullNamePatternMatchesAll=true&useSSL=true
-    username: user
-    password: 1234
+    url: jdbc:mysql://localhost:3306/spring_boot_security?useUnicode=true&characterEncoding=utf8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai&nullNamePatternMatchesAll=true&useSSL=false
+    username: root
+    password: 1qazxsw2!
   #     driver-class-name: oracle.jdbc.OracleDriver
   #     url: jdbc:oracle:thin:@192.168.8.136:1521:XE
   #     username: QQQ
@@ -20,7 +21,7 @@ spring:
   jpa:
     hibernate:
       naming:
-        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy #使用类型转下划线作为表名
       ddl-auto: update #生成实体类策略 #create-drop  #update
     show-sql: true
     generate-ddl: true #自动生成实体类表
@@ -30,19 +31,18 @@ spring:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect #不加这句则默认为MyISAM引擎  org.hibernate.dialect.Oracle10gDialect
     open-in-view: true
   session:
-    store-type: REDIS
-  redis:
-    password: 1qazxsw2!
+    store-type: none
   mvc:
     favicon:
       enabled: false
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
+  main:
+    lazy-initialization: false
 #    time-zone: GMT+8
 
 #热部署-classpath目录下的WEB-INF文件夹内容修改不重启
 #spring.devtools.restart.exclude=WEB-INF/**
-
 #--------------JPA----------------
 #无修改命名
 #spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl

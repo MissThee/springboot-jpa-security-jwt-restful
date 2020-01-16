@@ -1,4 +1,4 @@
-package com.github.missthee.db.primary.tool;
+package com.github.missthee.tool;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.query.internal.NativeQueryImpl;

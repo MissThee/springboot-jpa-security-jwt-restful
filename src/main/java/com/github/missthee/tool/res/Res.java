@@ -1,4 +1,4 @@
-package com.github.missthee.tool;
+package com.github.missthee.tool.res;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

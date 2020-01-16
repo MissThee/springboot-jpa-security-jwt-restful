@@ -1,10 +1,9 @@
 package com.github.missthee.controller;
 
-import com.github.missthee.db.primary.service.intef.SysUserService;
-import com.github.missthee.tool.Res;
-import com.github.missthee.db.primary.entity.SysUser;
+import com.github.missthee.service.intef.SysUserService;
+import com.github.missthee.tool.res.Res;
+import com.github.missthee.db.entity.SysUser;
 import com.github.missthee.config.security.jwt.JavaJWT;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +13,13 @@ import java.util.Map;
 
 @RestController
 public class LoginController {
-    @Autowired
-    SysUserService sysUserService;
-    @Autowired
-    JavaJWT javaJWT;
+    private final SysUserService sysUserService;
+    private final JavaJWT javaJWT;
+
+    public LoginController(SysUserService sysUserService, JavaJWT javaJWT) {
+        this.sysUserService = sysUserService;
+        this.javaJWT = javaJWT;
+    }
 
     @PostMapping(value = "/login")
     public Res loginProcess(HttpServletResponse httpServletResponse, @RequestBody(required = false) Map<String, Object> bJO) throws Exception {
