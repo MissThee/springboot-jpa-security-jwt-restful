@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-@Component
+
 public class ApplicationContextHolder implements ApplicationContextAware {
     private static ApplicationContext applicationContext;
 
