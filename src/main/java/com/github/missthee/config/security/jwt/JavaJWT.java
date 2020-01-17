@@ -4,35 +4,37 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @Component
 public class JavaJWT {
-
-    private static String JWT_TOKEN_KEY;
-    private static final String SECRET = "^@GSF%@#AN";
-    private final String issuer = "spring-project";
+    //实际此值与用户密码（加密后）进行字符串拼接之后，作为jwt签发/验证token时的secret值。此值不会被直接解析，且不应外泄。
+    private static final String SECRET = "&fgGF&%H75j";
+    //token的issuer参数，签发/验证时也会使用此值。此值可被直接解析。
+    private final String ISSUER = "spring-project";
+    //约定的，http请求参数中header部分token存放的key。
+    public static final String JWT_TOKEN_KEY = "Authorization";
     private final UserInfoForJWT userInfoForJWT;
 
     @Autowired
-    public JavaJWT(UserInfoForJWT userInfoForJWT) {
-        this.userInfoForJWT = userInfoForJWT;
-    }
-
-    @Value("${jwt.token.key:Authorization}")
-    public void setJWT_TOKEN_KEY(String a) {
-        JWT_TOKEN_KEY = a;
+    public JavaJWT(UserInfoForJWT userSecretForJWT) {
+        this.userInfoForJWT = userSecretForJWT;
     }
 
     /**
@@ -44,18 +46,19 @@ public class JavaJWT {
         }
         JWTCreator.Builder builder = JWT.create();
         //添加发布人信息【可直接解析】
-        builder.withIssuer(issuer);
-        builder.withExpiresAt(toDate(LocalDateTime.now().plusDays(expiresDayFromNow)));
+        builder.withIssuer(ISSUER);
+        builder.withExpiresAt(getExpireDate(expiresDayFromNow));
         //添加claim附加信息【可直接解析】
-        builder.withClaim("id", String.valueOf(userId));
+        builder.withClaim("id", String.valueOf(userId));//用户信息：token中仅携带用户id，服务端要使用用户其他信息（如：姓名，所属单位等），由此id在后台数据库自行查找。因每次访问都需要查找用户信息，用户信息最好使用缓存，避免频繁查询数据库
         builder.withClaim("duration", expiresDayFromNow);
-//      builder.withArrayClaim("roleList", roleList.toArray(new String[]{}));
-//      builder.withArrayClaim("permissionList", permissionList.toArray(new String[]{}));
         String token = builder.sign(Algorithm.HMAC256(secretBuilder(userId)));
         log.debug("CREATE TOKEN：" + token);
         return token;
     }
 
+    /**
+     * 传入一个token，返回一个新的未过期token，并保持原token中所有参数
+     */
     public String updateToken(String token) {
         try {
             DecodedJWT decodedJWT = JWT.decode(token);
@@ -66,12 +69,10 @@ public class JavaJWT {
                 throw new Exception("Error when update token, no id.");
             }
             JWTCreator.Builder builder = JWT.create();
-            builder.withIssuer(issuer);
-            builder.withExpiresAt(toDate(LocalDateTime.now().plusDays(decodedJWT.getClaim("duration").asInt())));
+            builder.withIssuer(ISSUER);
+            builder.withExpiresAt(getExpireDate(decodedJWT.getClaim("duration").asInt()));
             builder.withClaim("id", decodedJWT.getClaim("id").asString());
             builder.withClaim("duration", decodedJWT.getClaim("duration").asInt());
-//          builder.withArrayClaim("roleList", decodedJWT.getClaim("roleList").asList(String.class).toArray(new String[]{}));
-//          builder.withArrayClaim("permissionList", decodedJWT.getClaim("permissionList").asList(String.class).toArray(new String[]{}));
             String newToken = builder.sign(Algorithm.HMAC256(secretBuilder(decodedJWT.getClaim("id").asString())));
             log.debug("UPDATE TOKEN：" + newToken);
             return newToken;
@@ -81,26 +82,58 @@ public class JavaJWT {
         }
     }
 
-    public void updateTokenAndSetHeader(String token, HttpServletResponse httpServletResponse) {
-        token = updateToken(token);
-        if (token != null) {
-            httpServletResponse.setHeader(JWT_TOKEN_KEY, token);
+    /**
+     * 更新一个token，并将其设置到返回值的header中，有效期为Integer.MAX_VALUE分钟。基本等于永不过期了
+     */
+    public void updateTokenAndSetHeader(String token) {
+        updateTokenAndSetHeaderWithAvailableMinute(token, Integer.MAX_VALUE);
+    }
+
+    /**
+     * 更新一个token，并将其设置到返回值的header中，有效期为minute分钟
+     */
+    public void updateTokenAndSetHeaderWithAvailableMinute(String token, int minute) {
+        long tokenRemainingTime = getTokenRemainingTime(token);
+        if (tokenRemainingTime < minute && tokenRemainingTime >= 0) {
+            token = updateToken(token);
+            if (token != null) {
+                HttpServletResponse httpServletResponse = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getResponse();
+                if (httpServletResponse != null) {
+                    httpServletResponse.setHeader(JWT_TOKEN_KEY, token);
+                }
+            }
         }
     }
 
-    public boolean verifyToken(String token) {
+    /**
+     * 验证token。若验证方法异常为 JWTVerificationException 时， token 验证未通过。
+     * 若出现JWTVerificationException之外的异常则表示验证方法本身出现了错误，此时直接抛出异常，前端表现为会接收到状态为500返回值，应该需要调整后台。
+     */
+    public Boolean verifyToken(String token) {
+        if (StringUtils.isEmpty(token)) {
+            return false; //验证未通过
+        }
         try {
-            DecodedJWT decodedJWT = JWT.decode(token);
-            String id = decodedJWT.getClaim("id").asString();
+            DecodedJWT decodedJWT;
+            try {
+                decodedJWT = JWT.decode(token);
+            } catch (Exception e) {
+                return false; //验证未通过
+            }
+            Map<String, Claim> claims = decodedJWT.getClaims();
+            if (!claims.containsKey("id")) {
+                return false; //验证未通过
+            }
+            String id = claims.get("id").asString();
             Algorithm algorithm = Algorithm.HMAC256(secretBuilder(id));
             JWTVerifier verifier = JWT.require(algorithm)
-                    .withIssuer(issuer)
+                    .withIssuer(ISSUER)
                     .build();
             verifier.verify(token);
-        } catch (Exception ignored) {
-            return false;
+        } catch (JWTVerificationException ignored) {
+            return false; //验证未通过
         }
-        return true;
+        return true; //验证通过
     }
 
     private byte[] secretBuilder(Object userId) {
@@ -111,19 +144,20 @@ public class JavaJWT {
     /**
      * @return int剩余有效时间(分钟)
      */
-    public long getTokenRemainingTime(String token) {
+    public static long getTokenRemainingTime(String token) {
         DecodedJWT jwt = JWT.decode(token);
         Date expiresDate = jwt.getExpiresAt();
         if (expiresDate == null) {
             return -1;
         } else {
-            LocalDateTime expiresLocalDateTime = expiresDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-            Duration duration = Duration.between(LocalDateTime.now(), expiresLocalDateTime);
-            return duration.toDays();
+            return (int) (expiresDate.getTime() - new Date().getTime()) / (1000 * 60);
         }
     }
 
-    public String getId(String token) {
+    /**
+     * 从token中获取id值
+     */
+    public static String getId(String token) {
         try {
             DecodedJWT jwt = JWT.decode(token);
             return jwt.getClaim("id").asString();
@@ -132,25 +166,37 @@ public class JavaJWT {
         }
     }
 
-    public String getId(HttpServletResponse httpServletResponse) {
+    /**
+     * 从请求参数的header中的token中获取用户id值
+     */
+    public static String getId(HttpServletRequest httpServletRequest) {
         try {
-            String token = httpServletResponse.getHeader(JWT_TOKEN_KEY);
+            String token = httpServletRequest.getHeader(JWT_TOKEN_KEY);
             return getId(token);
         } catch (Exception e) {
             return null;
         }
     }
 
-    //    public static List<String> getRoleList(String token) {
-//        DecodedJWT jwt = JWT.decode(token);
-//        return jwt.getClaim("roleList").asList(String.class);
-//    }
-//
-//    public static List<String> getPermissionList(String token) {
-//        DecodedJWT jwt = JWT.decode(token);
-//        return jwt.getClaim("permissionList").asList(String.class);
-//    }
-    private Date toDate(LocalDateTime localDateTime) {
-        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    /**
+     * 从当前线程的请求参数的header中的token中获取用户id值
+     */
+    public static String getId() {
+        try {
+            HttpServletRequest httpServletRequest = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+            return getId(httpServletRequest);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * 以当前时间为基础，获取此时间expireDayFromNow天之后的日期
+     */
+    private static Date getExpireDate(int expireDayFromNow) {
+        Calendar instance = Calendar.getInstance();
+        instance.setTime(new Date());
+        instance.add(Calendar.DATE, expireDayFromNow);
+        return instance.getTime();
     }
 }

@@ -1,45 +1,41 @@
 package com.github.missthee.service.imp;
 
-import com.github.missthee.db.entity.SysPermission;
-import com.github.missthee.db.entity.SysRole;
 import com.github.missthee.db.entity.SysUser;
 import com.github.missthee.db.entity.SysUser_;
-import com.github.missthee.db.repository.UserRepository;
+import com.github.missthee.db.repository.SysUserRepository;
 import com.github.missthee.service.intef.SysUserService;
-
-import com.github.missthee.config.security.jwt.UserInfoForJWT;
-import com.github.missthee.config.security.security.filter.UserInfo;
-import org.hibernate.graph.GraphSemantic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.criteria.*;
-import java.util.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
-public class SysUserServiceImp implements SysUserService, UserInfoForJWT, UserInfo {
-    private final UserRepository userRepository;
+public class SysUserServiceImp implements SysUserService {
+    private final SysUserRepository userRepository;
 
     @PersistenceContext
     private EntityManager em;
 
     @Autowired
-    public SysUserServiceImp(UserRepository userRepository) {
+    public SysUserServiceImp(SysUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -97,15 +93,11 @@ public class SysUserServiceImp implements SysUserService, UserInfoForJWT, UserIn
     public Page<SysUser> multiConditionSearch(Map<String, String> searchMap, Integer pageNum, Integer pageSize) {
         //条件个数不定，单表查询
         Specification<SysUser> specification =
-                searchMap == null ? null : (root, criteriaQuery, criteriaBuilder) -> {
-                    Predicate predicate = criteriaBuilder.and(
+                searchMap == null ? null : (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.and(
                             searchMap.keySet().stream()
                                     .map(key -> criteriaBuilder.like(root.get(key), "%" + searchMap.get(key) + "%"))
                                     .toArray(Predicate[]::new)
                     );
-                    criteriaQuery.where(predicate);
-                    return predicate;
-                };
         Pageable pageable = (pageNum == null || pageSize == null) ? Pageable.unpaged() : PageRequest.of(pageNum - 1, pageSize, Sort.Direction.ASC, "id");
         return userRepository.findAll(specification, pageable);
     }
@@ -128,14 +120,7 @@ public class SysUserServiceImp implements SysUserService, UserInfoForJWT, UserIn
 
     @Override
     public SysUser emGraph(Long id) {
-        EntityGraph<?> graph = this.em.createEntityGraph(SysUser.NamedEntityGraph.Graph1);
-        Map<String, Object> props = new HashMap<String, Object>() {{
-//            put(GraphSemantic.LOAD.getJpaHintName(), graph);
-            //NamedEntityGraph中指定的attributeNodes会被处理为EAGER类型，其他字段保持默认设定值
-            //LOAD：在原有Entity的定义的基础上，额外需要获取什么字段/关系
-            //FETCH：完全放弃原有Entity的定义，定义需要获取什么字段/关系
-        }};
-        return em.find(SysUser.class, id, props);
+        return em.find(SysUser.class, id);
     }
 
     @Override
@@ -152,33 +137,5 @@ public class SysUserServiceImp implements SysUserService, UserInfoForJWT, UserIn
         return query.getResultList();
     }
 
-    //---------------------------权限认证辅助接口实现-------------------------------
-    @Override
-    public String getSecret(Object obj) {
-        SysUser sysUser = userRepository.findById(Long.valueOf(String.valueOf(obj))).orElseThrow(() -> new UsernameNotFoundException("User not found", new Throwable()));
-        return sysUser.getPassword();
-    }
-
-    @Override
-    public UserDetails loadUserById(String id) {
-        SysUser sysUser = userRepository.findById(Long.valueOf(id)).orElseThrow(() -> new UsernameNotFoundException("User not found", new Throwable()));
-        {//构造security提供的User类
-            List<String> authList = new ArrayList<>(); //GrantedAuthority是security提供的权限类，
-            Set<SysRole> roleList = sysUser.getRoleList();
-            for (SysRole role : roleList) {
-                authList.add("ROLE_" + role.getRole());
-                for (SysPermission permission : role.getPermissionList()) {
-                    authList.add(permission.getPermission());
-                }
-            }
-            //权限如果前缀是ROLE_，security就会认为这是个角色信息，而不是权限，例如ROLE_MENBER就是MENBER角色，CAN_SEND就是CAN_SEND权限
-
-            List<SimpleGrantedAuthority> list = new ArrayList<>();
-            for (String auth : authList) {
-                list.add(new SimpleGrantedAuthority(auth));
-            }
-            return new User(String.valueOf(sysUser.getId()), sysUser.getPassword(), list);//返回包括权限角色的User(此User为security提供的实体类)给security;
-        }
-    }
 }
 

@@ -1,6 +1,7 @@
 package com.github.missthee.config.exception;
 
 import com.github.missthee.config.log.builder.LogBuilder;
+import com.github.missthee.tool.res.Res;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -29,13 +30,12 @@ public class ExceptionController {
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     public Object httpMessageNotReadableException(HttpServletRequest request, Exception e) {
         log.debug(LogBuilder.requestLogBuilder(request, e));
-        Map<String,Object> res = new HashMap<>();
         if (String.valueOf(e).contains("Required request body is missing")) {
-            res.put("msg", "HttpMessageNotReadableException: 请求体缺少body。" + e);
+            return Res.failure("HttpMessageNotReadableException: 请求体缺少body。" + e);
         } else {
-            res.put("msg", "HttpMessageNotReadableException: 无法正确读取请求中的参数。" + e);
+            return Res.failure("HttpMessageNotReadableException: 无法正确读取请求中的参数。" + e);
         }
-        return res;
+
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)
@@ -43,14 +43,13 @@ public class ExceptionController {
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     public Object missingRequestHeaderExceptionException(HttpServletRequest request, Exception e) {
         log.debug(LogBuilder.requestLogBuilder(request, e));
-        Map<String,Object> res = new HashMap<>();
         String paramName = null;
         try {
             paramName = String.valueOf(e).substring(String.valueOf(e).indexOf("'") + 1, String.valueOf(e).lastIndexOf("'"));
         } catch (Exception ignored) {
         }
-        res.put("msg", (paramName == null ? "" : "MissingRequestHeaderException: 请求体header中缺少必须的参数【" + paramName + "】。") + e);
-        return res;
+        return Res.failure((paramName == null ? "" : "MissingRequestHeaderException: 请求体header中缺少必须的参数【" + paramName + "】。") + e);
+
     }
 
     //运行时所有异常
@@ -61,9 +60,7 @@ public class ExceptionController {
     public Object exceptionHandler(HttpServletRequest request, Exception e) {
         log.debug(LogBuilder.requestLogBuilder(request, e));
         e.printStackTrace();
-        Map<String,Object> res = new HashMap<>();
-        res.put("msg", "Exception: " + e);
-        return res;
+        return Res.failure("Exception: " + e);
     }
 
 }

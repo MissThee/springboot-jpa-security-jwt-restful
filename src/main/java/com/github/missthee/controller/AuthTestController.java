@@ -10,9 +10,10 @@ import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 
 @RestController
+@RequestMapping(value = "/auth")
 public class AuthTestController {
-    @RequestMapping(value = "/errorFunction")
-    public Res errorFunction() {
+    @RequestMapping(value = "/error")
+    public Res error() {
         return Res.success(Integer.parseInt("zxc"));
     }
 
@@ -22,10 +23,16 @@ public class AuthTestController {
         return Res.success("all user cant get this!");
     }
 
-    @PreAuthorize("hasRole('ADMIN') and hasRole('PROVIDER1')")
-    @RequestMapping(value = "/auth")
-    public Res auth() {
-        return Res.success(SecurityContextHolder.getContext().getAuthentication(), "/auth");
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "/admin")
+    public Res admin() {
+        return Res.success(SecurityContextHolder.getContext().getAuthentication(), "/admin");
+    }
+
+    @PreAuthorize("hasRole('ADMIN') and hasPermission(null,'PROVIDER1')")
+    @RequestMapping(value = "/ap")
+    public Res ap() {
+        return Res.success(SecurityContextHolder.getContext().getAuthentication(), "/ap");
     }
 
     @PermitAll//不加注解与加@PermitAll相同

@@ -2,6 +2,7 @@ package com.github.missthee.db.entity;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.github.missthee.db.common.idgenerator.JpaSnowflakeIdGenerator;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -14,18 +15,12 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Setter
-@Getter
+@Data
 @Accessors(chain = true)
 @DynamicUpdate()//更新时update语句只构建变动的字段（即数据库中查出的数据与当前实体类中差异的部分）
 @DynamicInsert()//插入时insert语句只构建变动的字段（即数据库中查出的数据与当前实体类中差异的部分，因插入时数据库一般查不到数据，所有字段认为是null。）
 @JsonView(SysNote.class)
 public class SysNote implements Serializable {
-    public interface NamedEntityGraph {
-        String Graph1 = "SysNote.Graph1";
-    }
-
-    //视图。
     //定义：通过在实体类属性上使用@JsonView()来指定本视图的字段；
     //使用：1、通过在Controller中使用@JsonView改变输出的字段：与当前视图匹配的字段 和 没有加@JsonView的字段 将会被返回
     //     2、若希望仅输出 与当前视图匹配的字段 ，可在类上使用@JsonView()注解，将整个类中属性分配默认的 视图
@@ -74,6 +69,7 @@ public class SysNote implements Serializable {
     private Boolean boolean1;
     @ColumnDefault("'A'")
     private Character character1;
-
+    @Version
+    private Long version;
 
 }

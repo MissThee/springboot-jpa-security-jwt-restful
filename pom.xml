@@ -57,6 +57,18 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.44</version>
         </dependency>
+        <!-- 二级缓存ehcache实现依赖  -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-ehcache</artifactId>
+        </dependency>
+        <!-- 生成meta model -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>5.3.2.Final</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- swagger2 依赖 及图形化依赖-->
         <dependency>
             <groupId>io.springfox</groupId>
@@ -67,13 +79,6 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
             <version>2.9.2</version>
-        </dependency>
-        <!-- 生成meta model -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
-            <version>5.3.2.Final</version>
-            <scope>provided</scope>
         </dependency>
         <!--对象拷贝工具-->
         <dependency>

@@ -16,8 +16,9 @@ import org.hibernate.type.Type;
 
 public class JpaSnowflakeIdGenerator implements Configurable, IdentifierGenerator {
     private static Snowflake snowflake;
-    public static final String NAME ="Jpa_Snow_flake_Id_Generator";
-    public static final String STRATEGY ="com.github.missthee.db.common.idgenerator.JpaSnowflakeIdGenerator";
+    public static final String NAME = "Jpa_Snow_flake_Id_Generator";
+    public static final String STRATEGY = "com.github.missthee.db.common.idgenerator.JpaSnowflakeIdGenerator";
+
     @Override
     public void configure(Type type, Properties properties, ServiceRegistry serviceRegistry) throws MappingException {
     }
@@ -25,8 +26,9 @@ public class JpaSnowflakeIdGenerator implements Configurable, IdentifierGenerato
     @SneakyThrows
     @Override
     public Serializable generate(SharedSessionContractImplementor sharedSessionContractImplementor, Object o) throws HibernateException {
+        //使用单例模式
         if (snowflake == null) {
-                snowflake = new Snowflake(0, 0);
+            snowflake = new Snowflake(0, 0);
         }
         return snowflake.nextId();
     }
