@@ -17,6 +17,7 @@ public interface SysUserService {
     SysUser selectUserById(Long id);
 
     SysUser selectUserByUsername(String username);
+
     Page<SysUser> multiConditionSearch(Map<String, String> searchMap,Integer pageNum,Integer pageSize);
 
     List<SysUser> emCriteria(Long id);

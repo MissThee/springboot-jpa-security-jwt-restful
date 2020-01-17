@@ -9,6 +9,7 @@ import com.github.missthee.service.intef.SysUserService;
 
 import com.github.missthee.config.security.jwt.UserInfoForJWT;
 import com.github.missthee.config.security.security.filter.UserInfo;
+import org.hibernate.graph.GraphSemantic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -111,27 +112,35 @@ public class SysUserServiceImp implements SysUserService, UserInfoForJWT, UserIn
 
     @Override
     public List<SysUser> emCriteria(Long id) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();//安全查询创建工厂(各种比较、运算逻辑或函数的生产)
-        CriteriaQuery<SysUser> cq = cb.createQuery(SysUser.class);//安全查询主语句（sql关键词：select,where,group by等，及内容拼接）
+        CriteriaBuilder cb = em.getCriteriaBuilder();//安全查询创建工厂，相当于使用prepareStatement可防止sql注入 (各种比较、运算逻辑或函数的生产 and or equal like)
+        CriteriaQuery<SysUser> cq = cb.createQuery(SysUser.class);//安全查询主语句 （sql关键词：select,where,group by,order by等语句块引导）
         Root<SysUser> root = cq.from(SysUser.class);//它与SQL查询中的FROM子句类似。
-        cq.where(cb.equal(root.get(SysUser_.id), id));
+        cq.where(
+                cb.or(
+                        cb.equal(root.get(SysUser_.id), id),
+                        cb.like(root.get(SysUser_.username), "%t%")
+                )
+        ).orderBy(
+                cb.asc(root.get(SysUser_.id))
+        );
         return em.createQuery(cq).getResultList();
     }
 
     @Override
     public SysUser emGraph(Long id) {
-        EntityGraph graph = this.em.createEntityGraph(SysUser.NamedEntityGraph.Graph1);
+        EntityGraph<?> graph = this.em.createEntityGraph(SysUser.NamedEntityGraph.Graph1);
         Map<String, Object> props = new HashMap<String, Object>() {{
-//            put(org.springframework.data.jpa.repository.EntityGraph.EntityGraphType.FETCH.getKey(), graph);
-            //put(org.springframework.data.jpa.repository.EntityGraph.EntityGraphType.LOAD.getKey(), graph);
-            //loadgraph：在原有Entity的定义的基础上，额外需要获取什么字段/关系
-            //fetchgraph：完全放弃原有Entity的定义，定义需要获取什么字段/关系
+//            put(GraphSemantic.LOAD.getJpaHintName(), graph);
+            //NamedEntityGraph中指定的attributeNodes会被处理为EAGER类型，其他字段保持默认设定值
+            //LOAD：在原有Entity的定义的基础上，额外需要获取什么字段/关系
+            //FETCH：完全放弃原有Entity的定义，定义需要获取什么字段/关系
         }};
         return em.find(SysUser.class, id, props);
     }
 
     @Override
     public List<?> emJoinFetchQuery(Long id) {
+        //查询结果为 username、role、permission三个字段组成的扁平数据，没有上下级关系
         Query query = em.createQuery(
                 "select " +
                         "new map(u.username as username,r.role as role,p.permission as permission) " +
@@ -143,7 +152,6 @@ public class SysUserServiceImp implements SysUserService, UserInfoForJWT, UserIn
         return query.getResultList();
     }
 
-
     //---------------------------权限认证辅助接口实现-------------------------------
     @Override
     public String getSecret(Object obj) {
@@ -154,25 +162,23 @@ public class SysUserServiceImp implements SysUserService, UserInfoForJWT, UserIn
     @Override
     public UserDetails loadUserById(String id) {
         SysUser sysUser = userRepository.findById(Long.valueOf(id)).orElseThrow(() -> new UsernameNotFoundException("User not found", new Throwable()));
-        return transToUserDetails(sysUser);
-    }
-
-    private UserDetails transToUserDetails(SysUser sysUser) {
-        List<String> authList = new ArrayList<>(); //GrantedAuthority是security提供的权限类，
-        Set<SysRole> roleList = sysUser.getRoleList();
-        for (SysRole role : roleList) {
-            authList.add("ROLE_" + role.getRole());
-            for (SysPermission permission : role.getPermissionList()) {
-                authList.add(permission.getPermission());
+        {//构造security提供的User类
+            List<String> authList = new ArrayList<>(); //GrantedAuthority是security提供的权限类，
+            Set<SysRole> roleList = sysUser.getRoleList();
+            for (SysRole role : roleList) {
+                authList.add("ROLE_" + role.getRole());
+                for (SysPermission permission : role.getPermissionList()) {
+                    authList.add(permission.getPermission());
+                }
             }
-        }
-        //权限如果前缀是ROLE_，security就会认为这是个角色信息，而不是权限，例如ROLE_MENBER就是MENBER角色，CAN_SEND就是CAN_SEND权限
+            //权限如果前缀是ROLE_，security就会认为这是个角色信息，而不是权限，例如ROLE_MENBER就是MENBER角色，CAN_SEND就是CAN_SEND权限
 
-        List<SimpleGrantedAuthority> list = new ArrayList<>();
-        for (String auth : authList) {
-            list.add(new SimpleGrantedAuthority(auth));
+            List<SimpleGrantedAuthority> list = new ArrayList<>();
+            for (String auth : authList) {
+                list.add(new SimpleGrantedAuthority(auth));
+            }
+            return new User(String.valueOf(sysUser.getId()), sysUser.getPassword(), list);//返回包括权限角色的User(此User为security提供的实体类)给security;
         }
-        return new User(String.valueOf(sysUser.getId()), sysUser.getPassword(), list);//返回包括权限角色的User(此User为security提供的实体类)给security;
     }
 }
 

@@ -67,25 +67,27 @@ public class AccountController {
         return Res.success(sysUserService.selectUserById(id));
     }
 
-    @GetMapping(value = "/criteria/{id}")
+    //------------------------------直接调用entityManager方法查询-------------------------------
+    @GetMapping(value = "/emCriteria/{id}")
     public Res<List<SysUser>> criteria(@PathVariable("id") Long id) {
         return Res.success(sysUserService.emCriteria(id));
     }
 
-    @GetMapping(value = "/graph/{id}")
-    @JsonView(SysUser.UserPasswordView.class)
+    @GetMapping(value = "/emGraph/{id}")
     public Res<SysUser> graph(@PathVariable("id") Long id) {
         return Res.success(sysUserService.emGraph(id));
 //        使用动态语句构建类构建的查询。
 //        实际查询语句为普通嵌套查询，不适合生产环境使用。如查询user列表，查询每个user的role列表，再查询每个role的permission列表。
     }
 
-    @GetMapping(value = "/joinFetch/{id}")
+    @GetMapping(value = "/emJoinFetch/{id}")
     public Res<?> emJoinFetch(@PathVariable("id") Long id) {
         return Res.success(sysUserService.emJoinFetchQuery(id));
 //        使用hql语句构建的查询。(em方法写查询语句构建)
 //        实际查询语句为left join直接关联查询，返回Map集合，可自由组合多表的字段
     }
+    //------------------------------直接调用entityManager方法查询，结束------------------------------
+
 
     @GetMapping(value = "/findFirstByUsernameQuery/{username}")
     public Res<SysUser> findFirstByUsernameQuery(@PathVariable("username") String username) {

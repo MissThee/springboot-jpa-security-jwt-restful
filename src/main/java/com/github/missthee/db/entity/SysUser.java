@@ -45,9 +45,6 @@ public class SysUser implements Serializable {
         String Graph1 = "SysUser.Graph1";
     }
 
-    public interface UserPasswordView {
-    }
-
     @Id
 //   @GeneratedValue的 AUTO　自动选择一个最适合底层数据库的主键生成策略。如MySQL会自动对应auto increment。这个是默认选项，即如果只写@GeneratedValue，等价于@GeneratedValue(strategy=GenerationType.AUTO)
 //    @GeneratedValue(strategy = GenerationType.TABLE, generator = "PK_GEN")
@@ -59,7 +56,6 @@ public class SysUser implements Serializable {
     private String username; //帐号
     private String nickname; //昵称
 
-    @JsonView(UserPasswordView.class)
     private String password; //密码;
     @Column(columnDefinition = "int default 1") //定义默认值
     private Boolean isEnable;      //用户状态

@@ -25,7 +25,6 @@ public class SysNote implements Serializable {
         String Graph1 = "SysNote.Graph1";
     }
 
-
     //视图。
     //定义：通过在实体类属性上使用@JsonView()来指定本视图的字段；
     //使用：1、通过在Controller中使用@JsonView改变输出的字段：与当前视图匹配的字段 和 没有加@JsonView的字段 将会被返回
