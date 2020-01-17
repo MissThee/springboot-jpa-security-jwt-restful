@@ -1,4 +1,4 @@
-package com.github.common.config.security.springsecurity.annotation;
+package com.github.missthee.config.security.springsecurity.annotation;
 
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;

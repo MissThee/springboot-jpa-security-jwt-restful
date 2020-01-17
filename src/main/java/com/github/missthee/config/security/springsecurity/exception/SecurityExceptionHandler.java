@@ -1,7 +1,7 @@
-package com.github.common.config.security.springsecurity.exception;
+package com.github.missthee.config.security.springsecurity.exception;
 
-import com.github.common.config.exception.model.ExceptionResultModel;
-import com.github.common.config.log.builder.LogBuilder;
+import com.github.missthee.config.log.builder.LogBuilder;
+import com.github.missthee.tool.res.Res;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class SecurityExceptionHandler {
     @ResponseStatus(code = HttpStatus.FORBIDDEN)
     public Object unauthorizedException(HttpServletRequest request, AccessDeniedException e) {
         log.debug(LogBuilder.requestLogBuilder(request, null, e));
-        return new ExceptionResultModel(e.getClass().getSimpleName() + ":" + e.getMessage());
+        return Res.failure(e.getClass().getSimpleName() + ":" + e.getMessage());
     }
 
     //需要登录。返回状态401。约定前端任何时候接收403状态码时需给用户提供登录页面
@@ -33,6 +33,6 @@ public class SecurityExceptionHandler {
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
     public Object unauthenticatedException(HttpServletRequest request, BadCredentialsException e) {
         log.debug(LogBuilder.requestLogBuilder(request, null, e));
-        return new ExceptionResultModel(e.getClass().getSimpleName() + ":" + e.getMessage());
+        return Res.failure(e.getClass().getSimpleName() + ":" + e.getMessage());
     }
 }
