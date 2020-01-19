@@ -3,6 +3,7 @@ package com.github.missthee.db.entity;
 import com.github.missthee.db.common.idgenerator.JpaSnowflakeIdGenerator;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
@@ -27,5 +28,6 @@ public class SysRolePermission {
     private Long roleId;
     private Long permissionId;
     @Version
+    @ColumnDefault("0")
     private Long version;
 }

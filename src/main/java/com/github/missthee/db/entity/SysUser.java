@@ -37,6 +37,7 @@ public class SysUser implements Serializable {
     @ColumnDefault("1")
     private Boolean isEnable;      //用户状态
     @Version
+    @ColumnDefault("0")
     private Long version;
 }
 

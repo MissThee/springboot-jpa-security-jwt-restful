@@ -60,13 +60,16 @@
         <!-- 二级缓存ehcache实现依赖  -->
         <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-ehcache</artifactId>
+            <artifactId>hibernate-jcache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
         </dependency>
         <!-- 生成meta model -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-jpamodelgen</artifactId>
-            <version>5.3.2.Final</version>
             <scope>provided</scope>
         </dependency>
         <!-- swagger2 依赖 及图形化依赖-->

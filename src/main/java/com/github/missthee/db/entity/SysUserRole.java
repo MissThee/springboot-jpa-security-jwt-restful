@@ -28,5 +28,6 @@ public class SysUserRole {
     private Long userId;
     private Long roleId;
     @Version
+    @ColumnDefault("0")//如果version为null值，之后更新操作会有空指针异常
     private Long version;
 }

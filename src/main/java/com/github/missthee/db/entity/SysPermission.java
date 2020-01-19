@@ -31,6 +31,7 @@ public class SysPermission implements Serializable {
     @ColumnDefault("1")
     private Boolean isEnable;// 是否可用
     @Version
+    @ColumnDefault("0")
     private Long version;
 
 }

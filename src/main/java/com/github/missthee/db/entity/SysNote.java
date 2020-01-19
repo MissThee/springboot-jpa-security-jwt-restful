@@ -70,6 +70,7 @@ public class SysNote implements Serializable {
     @ColumnDefault("'A'")
     private Character character1;
     @Version
+    @ColumnDefault("0")
     private Long version;
 
 }
