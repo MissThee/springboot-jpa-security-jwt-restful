@@ -1,4 +1,4 @@
-package com.github.missthee.db.entity;
+package com.github.missthee.db.primary.entity;
 
 import com.github.missthee.db.common.idgenerator.JpaSnowflakeIdGenerator;
 import lombok.Data;

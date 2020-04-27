@@ -1,18 +1,13 @@
-package com.github.missthee.db.entity;
+package com.github.missthee.db.primary.entity;
 
 import com.github.missthee.db.common.idgenerator.JpaSnowflakeIdGenerator;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.*;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.List;
 
 @Entity
 @Data

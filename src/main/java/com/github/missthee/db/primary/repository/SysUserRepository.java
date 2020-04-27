@@ -1,6 +1,6 @@
-package com.github.missthee.db.repository;
+package com.github.missthee.db.primary.repository;
 
-import com.github.missthee.db.entity.SysUser;
+import com.github.missthee.db.primary.entity.SysUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

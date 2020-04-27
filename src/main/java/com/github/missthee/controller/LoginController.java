@@ -2,7 +2,7 @@ package com.github.missthee.controller;
 
 import com.github.missthee.service.intef.SysUserService;
 import com.github.missthee.tool.res.Res;
-import com.github.missthee.db.entity.SysUser;
+import com.github.missthee.db.primary.entity.SysUser;
 import com.github.missthee.config.security.jwt.JavaJWT;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.StringUtils;

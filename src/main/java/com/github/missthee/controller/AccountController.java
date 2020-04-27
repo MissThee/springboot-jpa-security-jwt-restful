@@ -1,7 +1,6 @@
 package com.github.missthee.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.github.missthee.db.entity.SysUser;
+import com.github.missthee.db.primary.entity.SysUser;
 import com.github.missthee.service.intef.SysUserService;
 import com.github.missthee.tool.res.Res;
 import com.github.missthee.tool.res.SimpleDataList;
@@ -26,7 +25,6 @@ public class AccountController {
     private final SysUserService sysUserService;
     private final MapperFacade mapperFacade;
 
-    @Autowired
     public AccountController(SysUserService sysUserService, MapperFacade mapperFacade) {
         this.sysUserService = sysUserService;
         this.mapperFacade = mapperFacade;
@@ -87,7 +85,6 @@ public class AccountController {
 //        实际查询语句为left join直接关联查询，返回Map集合，可自由组合多表的字段
     }
     //------------------------------直接调用entityManager方法查询，结束------------------------------
-
 
     @GetMapping(value = "/findFirstByUsernameQuery/{username}")
     public Res<SysUser> findFirstByUsernameQuery(@PathVariable("username") String username) {

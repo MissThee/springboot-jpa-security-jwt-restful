@@ -1,10 +1,12 @@
 package com.github.missthee.service.intef;
 
 
-import com.github.missthee.db.entity.SysNote;
-
 public interface SysNoteService {
-    void testTransactionFailure();
+    void testTranAnnoFailure();
 
-    void testTransactionSuccess();
+    void testTranAnnoSuccess();
+
+    void testTranObjSuccess();
+
+    void testEM();
 }

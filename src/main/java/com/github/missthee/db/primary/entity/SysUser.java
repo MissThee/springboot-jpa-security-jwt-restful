@@ -1,7 +1,6 @@
-package com.github.missthee.db.entity;
+package com.github.missthee.db.primary.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.github.missthee.db.common.idgenerator.JpaSnowflakeIdGenerator;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -9,10 +8,7 @@ import org.hibernate.annotations.*;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.Set;
 
 
 @Entity

@@ -1,10 +1,11 @@
 package com.github.missthee.service.imp;
 
-import com.github.missthee.db.entity.SysUser;
-import com.github.missthee.db.entity.SysUser_;
-import com.github.missthee.db.repository.SysUserRepository;
+import com.github.missthee.db.primary.entity.SysUser;
+import com.github.missthee.db.primary.entity.SysUser_;
+import com.github.missthee.db.primary.repository.SysUserRepository;
 import com.github.missthee.service.intef.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,13 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,17 +30,17 @@ import java.util.Optional;
 public class SysUserServiceImp implements SysUserService {
     private final SysUserRepository userRepository;
 
-    @PersistenceContext
-    private EntityManager em;
+    private final EntityManager entityManager;
 
     @Autowired
-    public SysUserServiceImp(SysUserRepository userRepository) {
+    public SysUserServiceImp(SysUserRepository userRepository, @Qualifier("primaryEntityManager") EntityManager entityManager) {
         this.userRepository = userRepository;
+        this.entityManager = entityManager;
     }
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class,value="primaryTransactionManager")
     public SysUser insert(SysUser sysUser) {
         Optional<SysUser> sysUserOp = userRepository.findFirstByUsername(sysUser.getUsername());
         if (sysUserOp.isPresent()) {
@@ -53,7 +52,7 @@ public class SysUserServiceImp implements SysUserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class,value="primaryTransactionManager")
     public SysUser update(SysUser sysUser) {
         Optional<SysUser> sysUserOp = userRepository.findFirstByUsername(sysUser.getUsername());
         if (sysUserOp.isPresent()) {
@@ -104,7 +103,7 @@ public class SysUserServiceImp implements SysUserService {
 
     @Override
     public List<SysUser> emCriteria(Long id) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();//安全查询创建工厂，相当于使用prepareStatement可防止sql注入 (各种比较、运算逻辑或函数的生产 and or equal like)
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();//安全查询创建工厂，相当于使用prepareStatement可防止sql注入 (各种比较、运算逻辑或函数的生产 and or equal like)
         CriteriaQuery<SysUser> cq = cb.createQuery(SysUser.class);//安全查询主语句 （sql关键词：select,where,group by,order by等语句块引导）
         Root<SysUser> root = cq.from(SysUser.class);//它与SQL查询中的FROM子句类似。
         cq.where(
@@ -115,18 +114,18 @@ public class SysUserServiceImp implements SysUserService {
         ).orderBy(
                 cb.asc(root.get(SysUser_.id))
         );
-        return em.createQuery(cq).getResultList();
+        return entityManager.createQuery(cq).getResultList();
     }
 
     @Override
     public SysUser emGraph(Long id) {
-        return em.find(SysUser.class, id);
+        return entityManager.find(SysUser.class, id);
     }
 
     @Override
     public List<?> emJoinFetchQuery(Long id) {
         //查询结果为 username、role、permission三个字段组成的扁平数据，没有上下级关系
-        Query query = em.createQuery(
+        Query query = entityManager.createQuery(
                 "select " +
                         "new map(u.username as username,r.role as role,p.permission as permission) " +
                         "from SysUser u " +

@@ -1,6 +1,6 @@
-package com.github.missthee.db.repository;
+package com.github.missthee.db.primary.repository;
 
-import com.github.missthee.db.entity.SysRole;
+import com.github.missthee.db.primary.entity.SysRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

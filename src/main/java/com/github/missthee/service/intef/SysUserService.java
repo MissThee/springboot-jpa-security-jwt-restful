@@ -1,7 +1,7 @@
 package com.github.missthee.service.intef;
 
 
-import com.github.missthee.db.entity.SysUser;
+import com.github.missthee.db.primary.entity.SysUser;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

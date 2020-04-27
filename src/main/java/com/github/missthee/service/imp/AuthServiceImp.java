@@ -2,8 +2,8 @@ package com.github.missthee.service.imp;
 
 import com.github.missthee.config.security.jwt.UserInfoForJWT;
 import com.github.missthee.config.security.springsecurity.filter.UserInfoForSecurity;
-import com.github.missthee.db.entity.*;
-import com.github.missthee.db.repository.*;
+import com.github.missthee.db.primary.entity.*;
+import com.github.missthee.db.primary.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.vote.RoleVoter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -1,5 +1,7 @@
 package com.github.missthee.config.security.springsecurity;
 
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
         //在Security的默认拦截器里，默认会开启CSRF处理，判断请求是否携带了_csrf校验值，如果没有就拒绝访问。在请求为(GET|HEAD|TRACE|OPTIONS)时，则不会开启。
         //这里关闭csrf。如果需求需要开启，需要要求前端配合修改来适配。
         http.csrf().disable();

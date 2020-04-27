@@ -1,5 +1,6 @@
 package com.github.missthee.tool.res;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -69,8 +70,10 @@ public class Res<T> implements Serializable {
     public static <T> Res<T> failure() {
         return new Res<>(false, null, "");
     }
-
+    @JsonView(Object.class)//使用@JsonView作为controller输出时，可一直包含这些字段
     private Boolean result;
+    @JsonView(Object.class)
     private T data;
+    @JsonView(Object.class)
     private String msg;
 }
