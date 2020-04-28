@@ -8,24 +8,21 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
+import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Service
 public class SysNoteServiceImp implements SysNoteService {
-//@PersistenceContext
-//private EntityManager entityManager;
-    private final EntityManager entityManager;
-    private final EntityManagerFactory entityManagerFactory;
+    @PersistenceUnit(unitName = "primaryPersistenceUnit")
+    private EntityManagerFactory entityManagerFactory;
+    @PersistenceContext(unitName = "primaryPersistenceUnit")
+    private EntityManager entityManager;
 
     private final SysNoteRepository sysNoteRepository;
-    public SysNoteServiceImp(@Qualifier("primaryEntityManager") EntityManager entityManager, SysNoteRepository sysNoteRepository,@Qualifier("primaryEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
-        this.entityManager = entityManager;
+
+    public SysNoteServiceImp(SysNoteRepository sysNoteRepository) {
         this.sysNoteRepository = sysNoteRepository;
-        this.entityManagerFactory = entityManagerFactory;
     }
 
     @Override
@@ -33,7 +30,7 @@ public class SysNoteServiceImp implements SysNoteService {
         doTransFailure();
     }
 
-    @Transactional(rollbackFor = Exception.class,value="primaryTransactionManager")
+    @Transactional(rollbackFor = Exception.class, value = "primaryTransactionManager")
     SysNote doTransFailure() {
         SysNote sysNote = entityManager.find(SysNote.class, 1L);
         sysNote.setParam2("字段2设置" + new SimpleDateFormat("HH:mm:ss").format(new Date()));
@@ -43,17 +40,20 @@ public class SysNoteServiceImp implements SysNoteService {
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class,value="primaryTransactionManager")
-    public void testTranAnnoSuccess()  {
+    @Transactional(rollbackFor = Exception.class, value = "primaryTransactionManager")
+    public void testTranAnnoSuccess() {
         sysNoteRepository.save(new SysNote().setParam1("123123"));
 
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class,value="primaryTransactionManager")
-    public void testEM()  {
-       SysNote sysNote = doTrans();
-       SysNote sysNote1 = doTrans1();
+    @Transactional(rollbackFor = Exception.class, value = "primaryTransactionManager")
+    public void testEM() {
+
+        System.out.println("entityManager!!!" + entityManager.isOpen() + "  " + entityManager);
+        entityManager.close();
+        SysNote sysNote = doTrans();
+        SysNote sysNote1 = doTrans1();
     }
 
     @Override

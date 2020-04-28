@@ -16,8 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -29,18 +28,17 @@ import java.util.Optional;
 @Service
 public class SysUserServiceImp implements SysUserService {
     private final SysUserRepository userRepository;
-
-    private final EntityManager entityManager;
+    @PersistenceContext(unitName = "primaryPersistenceUnit")
+    private EntityManager entityManager;
 
     @Autowired
-    public SysUserServiceImp(SysUserRepository userRepository, @Qualifier("primaryEntityManager") EntityManager entityManager) {
+    public SysUserServiceImp(SysUserRepository userRepository) {
         this.userRepository = userRepository;
-        this.entityManager = entityManager;
     }
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class,value="primaryTransactionManager")
+    @Transactional(rollbackFor = Exception.class, value = "primaryTransactionManager")
     public SysUser insert(SysUser sysUser) {
         Optional<SysUser> sysUserOp = userRepository.findFirstByUsername(sysUser.getUsername());
         if (sysUserOp.isPresent()) {
@@ -52,7 +50,7 @@ public class SysUserServiceImp implements SysUserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class,value="primaryTransactionManager")
+    @Transactional(rollbackFor = Exception.class, value = "primaryTransactionManager")
     public SysUser update(SysUser sysUser) {
         Optional<SysUser> sysUserOp = userRepository.findFirstByUsername(sysUser.getUsername());
         if (sysUserOp.isPresent()) {
@@ -93,10 +91,10 @@ public class SysUserServiceImp implements SysUserService {
         //条件个数不定，单表查询
         Specification<SysUser> specification =
                 searchMap == null ? null : (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.and(
-                            searchMap.keySet().stream()
-                                    .map(key -> criteriaBuilder.like(root.get(key), "%" + searchMap.get(key) + "%"))
-                                    .toArray(Predicate[]::new)
-                    );
+                        searchMap.keySet().stream()
+                                .map(key -> criteriaBuilder.like(root.get(key), "%" + searchMap.get(key) + "%"))
+                                .toArray(Predicate[]::new)
+                );
         Pageable pageable = (pageNum == null || pageSize == null) ? Pageable.unpaged() : PageRequest.of(pageNum - 1, pageSize, Sort.Direction.ASC, "id");
         return userRepository.findAll(specification, pageable);
     }

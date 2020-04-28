@@ -5,27 +5,26 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateSettings;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.Objects;
 
 
 @Configuration
-@EnableTransactionManagement
+//@EnableTransactionManagement//org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration中已配置
+@EnableConfigurationProperties({HibernateProperties.class,JpaProperties.class})
 public class SecondaryDBConfig {
     public static final String DB_INDEX_NAME = "secondary";
     public static final String DB_REPOSITORY_PACKAGE = "com.github.missthee.db." + DB_INDEX_NAME + ".repository";
@@ -35,7 +34,7 @@ public class SecondaryDBConfig {
             entityManagerFactoryRef = DB_INDEX_NAME + "EntityManagerFactory",
             transactionManagerRef = DB_INDEX_NAME + "TransactionManager",
             basePackages = {DB_REPOSITORY_PACKAGE})//设置dao（repo）所在位置
-    public static class EnableJpaRepositoriesConfig {
+    private static class EnableJpaRepositoriesConfig {
 
     }
 
@@ -46,7 +45,7 @@ public class SecondaryDBConfig {
     }
 
     @Bean(name = DB_INDEX_NAME + "EntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean(@Qualifier("myJpaProperties") JpaProperties jpaProperties, @Qualifier("myHibernateProperties") HibernateProperties hibernateProperties) {
+    public LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean(JpaProperties jpaProperties, HibernateProperties hibernateProperties) {
         return new LocalContainerEntityManagerFactoryBean() {{
             setJpaPropertyMap(hibernateProperties.determineHibernateProperties(
                     jpaProperties.getProperties(),
@@ -54,26 +53,22 @@ public class SecondaryDBConfig {
                         ddlAuto(hibernateProperties::getDdlAuto);
                     }}));
             setJpaVendorAdapter(new HibernateJpaVendorAdapter() {{
-                setDataSource(dataSource());
-                setPersistenceUnitName(DB_INDEX_NAME + "PersistenceUnit");
-                setGenerateDdl(jpaProperties.isGenerateDdl());
+                setShowSql(jpaProperties.isShowSql());
                 if (jpaProperties.getDatabase() != null) {
                     setDatabase(jpaProperties.getDatabase());
                 }
                 if (jpaProperties.getDatabasePlatform() != null) {
                     setDatabasePlatform(jpaProperties.getDatabasePlatform());
                 }
-                setShowSql(jpaProperties.isShowSql());
-                List<String> mappingResources = jpaProperties.getMappingResources();
-                setMappingResources((!ObjectUtils.isEmpty(mappingResources) ? StringUtils.toStringArray(mappingResources) : null));
-                setPackagesToScan(DB_ENTITY_PACKAGE);
+                setGenerateDdl(jpaProperties.isGenerateDdl());
             }});
-        }};
-    }
+            setPersistenceUnitName(DB_INDEX_NAME + "PersistenceUnit");
+            setDataSource(dataSource());
+            setPackagesToScan(DB_ENTITY_PACKAGE);
+            List<String> mappingResources = jpaProperties.getMappingResources();
+            setMappingResources(!ObjectUtils.isEmpty(mappingResources) ? StringUtils.toStringArray(mappingResources) : null);
 
-    @Bean(name = DB_INDEX_NAME + "EntityManager")
-    public EntityManager entityManager(@Qualifier(DB_INDEX_NAME + "EntityManagerFactory") LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean) {
-        return SharedEntityManagerCreator.createSharedEntityManager(Objects.requireNonNull(localContainerEntityManagerFactoryBean.getObject()));
+        }};
     }
 
     @Bean(name = DB_INDEX_NAME + "TransactionManager")
