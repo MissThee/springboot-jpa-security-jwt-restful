@@ -1,14 +1,14 @@
 package com.github.missthee.vo.user;
 
-import lombok.Data;
-
-import javax.validation.constraints.NotEmpty;
+import lombok.*;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserInsertVO {
-    @NotEmpty
+    @NonNull
     private String username;
-    @NotEmpty
+    @NonNull
     private String password;
     private String nickname;
 }

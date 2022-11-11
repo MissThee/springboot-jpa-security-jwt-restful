@@ -30,11 +30,11 @@ public class JavaJWT {
     private final String ISSUER = "spring-project";
     //约定的，http请求参数中header部分token存放的key。
     public static final String JWT_TOKEN_KEY = "Authorization";
-    private final UserInfoForJWT userInfoForJWT;
+    private final JWTUserInfoUtil JWTUserInfoUtil;
 
     @Autowired
-    public JavaJWT(UserInfoForJWT userSecretForJWT) {
-        this.userInfoForJWT = userSecretForJWT;
+    public JavaJWT(JWTUserInfoUtil userSecretForJWT) {
+        this.JWTUserInfoUtil = userSecretForJWT;
     }
 
     /**
@@ -110,7 +110,7 @@ public class JavaJWT {
      * 若出现JWTVerificationException之外的异常则表示验证方法本身出现了错误，此时直接抛出异常，前端表现为会接收到状态为500返回值，应该需要调整后台。
      */
     public Boolean verifyToken(String token) {
-        if (StringUtils.isEmpty(token)) {
+        if (!StringUtils.hasText(token)) {
             return false; //验证未通过
         }
         try {
@@ -137,7 +137,7 @@ public class JavaJWT {
     }
 
     private byte[] secretBuilder(Object userId) {
-        String userSecret = userInfoForJWT.getSecret(userId);
+        String userSecret = JWTUserInfoUtil.getSecret(userId);
         return (SECRET + userSecret).getBytes();
     }
 

@@ -1,23 +1,26 @@
 package com.github.missthee.db.primary.entity;
 
 import com.github.missthee.db.common.idgenerator.JpaSnowflakeIdGenerator;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.Accessors;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Version;
+import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Accessors(chain = true)
 @DynamicUpdate()
 @DynamicInsert()
+@Cacheable
 public class SysRolePermission {
     @Id
 //    @GeneratedValue(strategy = GenerationType.TABLE, generator = "PK_GEN")
@@ -30,4 +33,17 @@ public class SysRolePermission {
     @Version
     @ColumnDefault("0")
     private Long version;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        SysRolePermission that = (SysRolePermission) o;
+        return id != null && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

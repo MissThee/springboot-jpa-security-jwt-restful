@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,7 +27,7 @@ public class NoteController {
         this.sysNoteService = sysNoteService;
     }
 
-    @RequestMapping(value = "/test")
+    @GetMapping(value = "/test")
     public Res<SysNote> note1() {
         Optional<SysNote> noteOp = sysNoteRepository.findById(1L);
         //noteRepository.getOne(1L);返回的是实体类的一个代理对象，会携带额外的属性，如hibernateLazyInitializer
@@ -34,47 +35,47 @@ public class NoteController {
 
     }
 
-    @RequestMapping(value = "/jv1")
+    @GetMapping(value = "/jv1")
     @JsonView(SysNote.first2Param.class)
     public Res<SysNote> jv1() {
         Optional<SysNote> noteOp = sysNoteRepository.findById(1L);
         return Res.success(noteOp.orElseGet(SysNote::new));
     }
 
-    @RequestMapping(value = "/jv2")
+    @GetMapping(value = "/jv2")
     @JsonView(SysNote.first4Param.class)
     public Res<SysNote> jv2() {
         Optional<SysNote> noteOp = sysNoteRepository.findById(1L);
         return Res.success(noteOp.orElseGet(SysNote::new));
     }
 
-    @RequestMapping(value = "/tranAnno")
+    @GetMapping(value = "/tranAnno")
     //@Transactional(rollbackOn = Exception.class,value="primaryTransactionManager")//可以在controller使用事务注解
-    public Res<SysNote> tranAnno() throws Exception {
+    public Res tranAnno() throws Exception {
         sysNoteService.testTranAnnoSuccess();
         return Res.success();
     }
 
-    @RequestMapping(value = "/tranAnno1")
-    public Res<SysNote> tranAnno1() throws Exception {
+    @GetMapping(value = "/tranAnno1")
+    public Res tranAnno1() throws Exception {
         sysNoteService.testTranAnnoFailure();//抛出异常，解使用在非spring管理的方法或对象上，不能正确开启事务
         return Res.success();
     }
 
-    @RequestMapping(value = "/tranObj")
-    public Res<SysNote> tranObj() {
+    @GetMapping(value = "/tranObj")
+    public Res tranObj() {
         sysNoteService.testTranObjSuccess();
         return Res.success();
     }
 
-    @RequestMapping(value = "/testEM")
-    public Res<SysNote> testEM() {
+    @GetMapping(value = "/testEM")
+    public Res testEM() {
         sysNoteService.testEM();
         return Res.success();
     }
 
-    @RequestMapping(value = "/complex")
-    public Res<SysNote> complex() {
+    @GetMapping(value = "/complex")
+    public Res complex() {
         Optional<SysNote> oneOp = sysNoteRepository.findFirstByIdEqualsOrderByIdDesc(1L);
         Iterable<SysNote> allOp = sysNoteRepository.findAllByIdAfterOrderByIdDesc(1L);
         //分页，page页号0开始，size每页条数1开始

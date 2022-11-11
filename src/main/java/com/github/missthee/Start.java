@@ -5,9 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-//@EnableSwagger2
-public class SpringBootSecurityDemoApplication extends SpringBootServletInitializer {
+public class Start extends SpringBootServletInitializer {
     public static void main(String[] args) {
-        SpringApplication.run(SpringBootSecurityDemoApplication.class, args);
+        SpringApplication.run(Start.class, args);
     }
 }

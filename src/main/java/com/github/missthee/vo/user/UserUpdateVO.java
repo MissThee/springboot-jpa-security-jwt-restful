@@ -1,13 +1,12 @@
 package com.github.missthee.vo.user;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
-import javax.validation.constraints.NotEmpty;
-
-@EqualsAndHashCode(callSuper = true)
 @Data
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserUpdateVO extends UserInsertVO {
-    @NotEmpty
+    @NonNull
     private Long id;
 }

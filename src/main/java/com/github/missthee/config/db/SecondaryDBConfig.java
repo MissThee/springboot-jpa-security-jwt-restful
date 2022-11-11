@@ -1,6 +1,7 @@
 package com.github.missthee.config.db;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateSettings;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
@@ -23,6 +24,7 @@ import java.util.Objects;
 
 
 @Configuration
+@ConditionalOnProperty(name = "spring.datasource.secondary.enable", havingValue = "true")
 //@EnableTransactionManagement//org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration中已配置
 @EnableConfigurationProperties({HibernateProperties.class,JpaProperties.class})
 public class SecondaryDBConfig {

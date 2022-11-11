@@ -1,12 +1,14 @@
 package com.github.missthee.vo.user;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.hibernate.validator.constraints.Range;
+import lombok.*;
+import org.hibernate.validator.constraints.*;
 
 import java.util.Map;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserSearchVO {
     @ApiModelProperty(name = "页号,1开始")
     @Range(min = 1)

@@ -16,11 +16,14 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     @Override
     public boolean hasPermission(Authentication authentication, Object argsObj, Object targetPermission) {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        for (GrantedAuthority authority : authorities) {
-            if (authority.getAuthority().equals(targetPermission)) {
-                return true;
+        if (authorities != null) {
+            for (GrantedAuthority authority : authorities) {
+                if (authority.getAuthority().equals(targetPermission)) {
+                    return true;
+                }
             }
         }
+
         return false;
     }
 

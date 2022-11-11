@@ -4,6 +4,8 @@ import com.github.missthee.db.primary.entity.SysUser;
 import com.github.missthee.db.primary.entity.SysUser_;
 import com.github.missthee.db.primary.repository.SysUserRepository;
 import com.github.missthee.service.intef.SysUserService;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;

@@ -3,7 +3,7 @@ package com.github.missthee.config.security.springsecurity.filter;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public interface UserInfoForSecurity {
+public interface SecurityUserInfoUtil {
     UserDetails loadUserById(Object id) throws BadCredentialsException;
     //生成security身份对象时不再从session中获取，而是从token中获取用户信息，自行构建security身份对象。
     //此为获取UserDetails的接口，需用户自行构建UserDetails，用以生成security身份对象。

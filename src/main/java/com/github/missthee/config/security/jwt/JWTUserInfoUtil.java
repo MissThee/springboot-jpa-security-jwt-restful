@@ -1,6 +1,6 @@
 package com.github.missthee.config.security.jwt;
 
-public interface UserInfoForJWT {
+public interface JWTUserInfoUtil {
     /**
      * @param userId
      * @return

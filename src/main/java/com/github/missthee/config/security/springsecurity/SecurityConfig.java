@@ -1,28 +1,44 @@
 package com.github.missthee.config.security.springsecurity;
 
-import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
+import com.github.missthee.config.security.springsecurity.filter.MyJWTVerificationFilter;
+import com.github.missthee.config.security.springsecurity.filter.SecurityUserInfoUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(jsr250Enabled = true, prePostEnabled = true, securedEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+public class SecurityConfig {
+    private final AuthenticationConfiguration authenticationConfiguration;
 
-        //在Security的默认拦截器里，默认会开启CSRF处理，判断请求是否携带了_csrf校验值，如果没有就拒绝访问。在请求为(GET|HEAD|TRACE|OPTIONS)时，则不会开启。
-        //这里关闭csrf。如果需求需要开启，需要要求前端配合修改来适配。
-        http.csrf().disable();
-        http.formLogin().disable();//（非必须）停用security的登录页。
-        http.httpBasic().disable();//（非必须）停用security的弹窗登录
-        //禁用session。因为将要改依赖token获取用户信息的逻辑，此处可停用session
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration) {
+        this.authenticationConfiguration = authenticationConfiguration;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager() throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+                //在Security的默认拦截器里，默认会开启CSRF处理，判断请求是否携带了_csrf校验值，如果没有就拒绝访问。在请求为(GET|HEAD|TRACE|OPTIONS)时，则不会开启。
+                .csrf().disable() //这里关闭csrf。如果需求需要开启，需要要求前端配合修改来适配。
+                .formLogin().disable()//（非必须）停用security的登录页。
+                .httpBasic().disable()//（非必须）停用security的弹窗登录
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)//禁用session。因为依赖token获取用户信息的逻辑，此处可停用session
+                .and()
+                .build();
     }
 }
 //关于@EnableGlobalMethodSecurity注解（主要是开启各种注解）：

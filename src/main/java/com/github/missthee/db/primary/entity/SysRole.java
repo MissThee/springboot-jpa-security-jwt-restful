@@ -3,16 +3,24 @@ package com.github.missthee.db.primary.entity;
 import com.github.missthee.db.common.idgenerator.JpaSnowflakeIdGenerator;
 import lombok.*;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.*;
+import org.hibernate.Hibernate;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
+import java.util.Objects;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Accessors(chain = true)
 @DynamicUpdate()
 @DynamicInsert()
+@Cacheable
 public class SysRole {
     @Id
 //    @GeneratedValue(strategy = GenerationType.TABLE, generator = "PK_GEN")
@@ -27,4 +35,17 @@ public class SysRole {
     @Version
     @ColumnDefault("0")
     private Long version;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        SysRole sysRole = (SysRole) o;
+        return id != null && Objects.equals(id, sysRole.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
